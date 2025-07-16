@@ -23,9 +23,9 @@ document.getElementById('nightForm').addEventListener('submit', function (e) {
 
   // Placeholder para lógica futura
   if (tripType === "simple") {
-    messages.push("ℹ️ Tripulación simple seleccionada.");
+    messages.push("ℹ️ Tripulación de 2 pilotos seleccionada.");
   } else {
-    messages.push("ℹ️ Tripulación reforzada seleccionada.");
+    messages.push("ℹ️ Tripulación de 3/4 pilotos seleccionada.");
   }
 
   const result = document.getElementById('result');
