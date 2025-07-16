@@ -1,39 +1,54 @@
 document.getElementById('nightForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
-  const nightCount = parseInt(document.getElementById('nightCount').value);
+  const jornadas = [
+    { start: document.getElementById('start1').value, end: document.getElementById('end1').value },
+    { start: document.getElementById('start2').value, end: document.getElementById('end2').value },
+    { start: document.getElementById('start3').value, end: document.getElementById('end3').value }
+  ];
+
   const tripType = document.getElementById('tripType').value;
   const restBetween = parseInt(document.getElementById('restBetween').value);
   const dayOffAfter = document.getElementById('dayOffAfter').value;
+  const postRest = parseInt(document.getElementById('postRest').value);
 
+  let nocturnas = 0;
   let isValid = true;
   let messages = [];
 
-  // Regla 1: Tripulación de 2 pilotos no puede volar 3 noches seguidas
-  if (tripType === "2pilotos" && nightCount === 3) {
+  // Determinar cuántas jornadas cruzan la medianoche
+  jornadas.forEach((j, index) => {
+    if (j.start && j.end && j.start > j.end) {
+      nocturnas++;
+      messages.push(`✅ Jornada ${index + 1} cruza la medianoche.`);
+    } else if (j.start && j.end) {
+      messages.push(`ℹ️ Jornada ${index + 1} no cruza la medianoche.`);
+    }
+  });
+
+  // Validaciones por tipo de tripulación y número de noches
+  if (tripType === "2pilotos" && nocturnas >= 3) {
     isValid = false;
     messages.push("❌ Las tripulaciones de 2 pilotos no pueden volar 3 noches consecutivas.");
   }
 
-  // Regla 2: Tripulación de 3 o 4 pilotos requiere día libre después de 3 noches
-  if (tripType === "3o4pilotos" && nightCount === 3 && dayOffAfter === 'no') {
+  if (tripType === "3o4pilotos" && nocturnas >= 3 && dayOffAfter === 'no') {
     isValid = false;
     messages.push("❌ Las tripulaciones de 3 o 4 pilotos deben tener un día libre posterior si vuelan 3 noches consecutivas.");
   }
 
-  // Regla 3: Descanso mínimo entre noches
-  if (restBetween < 12) {
+  if (tripType === "3o4pilotos" && nocturnas >= 3 && dayOffAfter === 'si' && postRest < 36) {
     isValid = false;
-    messages.push("❌ El descanso entre noches debe ser al menos de 12 horas.");
+    messages.push("❌ El descanso posterior tras 3 noches debe ser mínimo de 36 horas.");
   }
 
-  // Informativo
-  if (tripType === "2pilotos") {
-    messages.push("ℹ️ Tripulación de 2 pilotos seleccionada.");
-  } else {
-    messages.push("ℹ️ Tripulación de 3 o 4 pilotos seleccionada.");
+  // Descanso mínimo entre noches
+  if (nocturnas > 1 && restBetween < 12) {
+    isValid = false;
+    messages.push("❌ El descanso entre noches debe ser de al menos 12 horas.");
   }
 
+  // Mensaje final
   const result = document.getElementById('result');
   result.classList.remove('valid', 'invalid');
 
