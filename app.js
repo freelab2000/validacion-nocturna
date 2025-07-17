@@ -1,86 +1,63 @@
-document.getElementById('nightForm').addEventListener('submit', function (e) {
+document.getElementById('nightForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
-  const jornadas = [
-    { start: document.getElementById('start1').value, end: document.getElementById('end1').value },
-    { start: document.getElementById('start2').value, end: document.getElementById('end2').value },
-    { start: document.getElementById('start3').value, end: document.getElementById('end3').value }
-  ];
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = '';
+  resultDiv.className = 'result';
 
   const tripType = document.getElementById('tripType').value;
   const restBetween = parseInt(document.getElementById('restBetween').value);
   const dayOffAfter = document.getElementById('dayOffAfter').value;
   const postRest = parseInt(document.getElementById('postRest').value);
 
-  let nochesZonaRoja = 0;
-  let isValid = true;
-  let messages = [];
+  const psvs = [
+    { start: document.getElementById('start1').value, end: document.getElementById('end1').value },
+    { start: document.getElementById('start2').value, end: document.getElementById('end2').value },
+    { start: document.getElementById('start3').value, end: document.getElementById('end3').value },
+  ];
 
-  // Función que evalúa si la jornada toca la zona roja (00:30–05:30)
-  function tocaZonaRoja(start, end) {
-    const zonaRojaIni = "00:30";
-    const zonaRojaFin = "05:30";
+  const zonaRojaInicio = "00:30";
+  const zonaRojaFin = "05:30";
+  const mediaNocheRef = "01:30";
 
-    if (!start || !end) return false;
-
-    if (start < end) {
-      return (start < zonaRojaFin && end > zonaRojaIni);
-    }
-
-    return (start < zonaRojaFin || end > zonaRojaIni);
+  function toDate(timeStr) {
+    const [h, m] = timeStr.split(':').map(Number);
+    const d = new Date();
+    d.setHours(h, m, 0, 0);
+    return d;
   }
 
-  // Evaluar cuántas jornadas entran en zona roja
-  jornadas.forEach((j, i) => {
-    if (tocaZonaRoja(j.start, j.end)) {
-      nochesZonaRoja++;
-      messages.push(`✅ Jornada ${i + 1} incluye tiempo en zona roja (00:30–05:30).`);
-    } else if (j.start && j.end) {
-      messages.push(`ℹ️ Jornada ${i + 1} no entra en zona roja.`);
-    }
-  });
+  function clasificarPSV(psv) {
+    if (!psv.start || !psv.end) return "no_noche";
+    const start = toDate(psv.start);
+    let end = toDate(psv.end);
+    if (end <= start) end.setDate(end.getDate() + 1);
 
-  // Validación legal: máximo 2 noches en zona roja
-  if (nochesZonaRoja > 2) {
-    isValid = false;
-    messages.push("❌ No se permiten más de 2 noches consecutivas dentro de la zona roja (00:30 a 05:30), según convenio colectivo.");
+    const zonaIni = toDate(zonaRojaInicio);
+    const zonaFin = toDate(zonaRojaFin);
+    if (start > end) zonaFin.setDate(zonaFin.getDate() + 1);
+
+    const mediaRef = toDate(mediaNocheRef);
+    if (start > mediaRef) mediaRef.setDate(mediaRef.getDate() + 1);
+
+    const overlapStart = start > zonaIni ? start : zonaIni;
+    const overlapEnd = end < zonaFin ? end : zonaFin;
+    const zonaOverlap = Math.max(0, (overlapEnd - overlapStart) / 60000); // en minutos
+
+    // Clasificación final
+    if (zonaOverlap === 0) return "no_noche";
+    if (start < mediaRef && end > toDate(zonaRojaInicio)) return "noche_completa";
+    if (end <= mediaRef || start >= mediaRef) return "media_noche";
+    return "no_noche";
   }
 
-  // Regla: tripulación 2 pilotos no puede 3 noches (independiente de zona roja)
-  if (tripType === "2pilotos" && nochesZonaRoja >= 3) {
-    isValid = false;
-    messages.push("❌ Las tripulaciones de 2 pilotos no pueden volar 3 noches consecutivas, incluso si cumplen otros requisitos.");
-  }
+  const noches = psvs.map(clasificarPSV).filter(v => v !== "no_noche");
 
-  // Regla: 3/4 pilotos + 3 noches → requiere día libre
-  if (tripType === "3o4pilotos" && nochesZonaRoja === 3 && dayOffAfter === "no") {
-    isValid = false;
-    messages.push("❌ Las tripulaciones de 3 o 4 pilotos deben tener un día libre posterior si vuelan 3 noches.");
-  }
-
-  // Regla: descanso posterior mínimo de 36h si hay 3 noches y día libre
-  if (tripType === "3o4pilotos" && nochesZonaRoja === 3 && dayOffAfter === "si" && postRest < 36) {
-    isValid = false;
-    messages.push("❌ El descanso posterior tras 3 noches debe ser mínimo de 36 horas.");
-  }
-
-  // Regla: descanso mínimo entre noches si hay más de 1 jornada
-  if (nochesZonaRoja > 1 && restBetween < 12) {
-    isValid = false;
-    messages.push("❌ El descanso entre noches debe ser al menos de 12 horas.");
-  }
-
-  // Mensaje informativo
-  messages.push(`🔎 Total de noches en zona roja detectadas: ${nochesZonaRoja}`);
-
-  const result = document.getElementById('result');
-  result.classList.remove('valid', 'invalid');
-
-  if (isValid) {
-    result.classList.add('valid');
-    result.innerHTML = `✅ Programación válida.<br><br>${messages.join("<br>")}`;
+  if (noches.length > 2) {
+    resultDiv.textContent = "❌ No cumple: Se exceden las 2 noches consecutivas permitidas.";
+    resultDiv.classList.add('invalid');
   } else {
-    result.classList.add('invalid');
-    result.innerHTML = `❌ Programación inválida.<br><br>${messages.join("<br>")}`;
+    resultDiv.textContent = "✅ Cumple: No se exceden las 2 noches consecutivas.";
+    resultDiv.classList.add('valid');
   }
 });
