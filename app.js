@@ -35,18 +35,23 @@ document.getElementById('nightForm').addEventListener('submit', function(e) {
 
     const zonaIni = toDate(zonaRojaInicio);
     const zonaFin = toDate(zonaRojaFin);
-    if (start > zonaFin) zonaFin.setDate(zonaFin.getDate() + 1);
+    if (end < zonaIni) {
+      zonaIni.setDate(zonaIni.getDate() - 1);
+      zonaFin.setDate(zonaFin.getDate() - 1);
+    } else if (start > zonaFin) {
+      zonaIni.setDate(zonaIni.getDate() + 1);
+      zonaFin.setDate(zonaFin.getDate() + 1);
+    }
 
     const mediaRef = toDate(mediaNocheRef);
     if (start > mediaRef) mediaRef.setDate(mediaRef.getDate() + 1);
 
     const overlapStart = start > zonaIni ? start : zonaIni;
     const overlapEnd = end < zonaFin ? end : zonaFin;
-    const zonaOverlap = (overlapEnd - overlapStart) / 60000; // en minutos
+    const zonaOverlap = (overlapEnd - overlapStart) / 60000; // minutos
 
     if (zonaOverlap <= 0) return "no_noche";
 
-    // Clasificación según cruce de zona roja
     if (start < zonaIni && end > mediaRef) return "noche_completa";
     if (end <= mediaRef || start >= mediaRef) return "media_noche";
 
