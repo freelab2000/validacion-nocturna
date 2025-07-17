@@ -22,14 +22,11 @@
     h1 {
       text-align: center;
       color: #003366;
-    }
-    h3 {
-      margin-top: 25px;
-      color: #004080;
+      margin-bottom: 20px;
     }
     label {
       display: block;
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: 600;
     }
     input, select {
@@ -61,50 +58,16 @@
     }
     .valid { background-color: #d9fdd3; color: #155724; }
     .invalid { background-color: #f8d7da; color: #721c24; }
-    .info-box {
-      margin-top: 20px;
-      background: #eaf4ff;
-      padding: 12px;
-      border-left: 4px solid #003366;
-      border-radius: 8px;
-    }
   </style>
 </head>
 <body>
   <h1>Validación Nocturna PSV</h1>
 
-  <div class="info-box">
-    <strong>ℹ️ Importante:</strong><br>
-    Según el convenio colectivo, solo se consideran <strong>jornadas nocturnas</strong> aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30 y 05:30 hora local</strong> del lugar de operación.<br><br>
-    Ejemplos:<br>
-    - Jornada de 22:00 a 06:00 → ✅ Sí cuenta como noche<br>
-    - Jornada de 20:00 a 00:15 → ❌ No cuenta como noche<br>
-    - Jornada de 01:00 a 07:00 → ✅ Sí cuenta como noche
-  </div>
-
   <form id="nightForm">
-    <h3>PSV 1</h3>
-    <label for="start1">Inicio PSV (L.T.):</label>
-    <input type="time" id="start1" required>
-    <label for="end1">Término PSV (L.T.):</label>
-    <input type="time" id="end1" required>
-
-    <h3>PSV 2</h3>
-    <label for="start2">Inicio PSV (L.T.):</label>
-    <input type="time" id="start2">
-    <label for="end2">Término PSV (L.T.):</label>
-    <input type="time" id="end2">
-
-    <h3>PSV 3</h3>
-    <label for="start3">Inicio PSV (L.T.):</label>
-    <input type="time" id="start3">
-    <label for="end3">Término PSV (L.T.):</label>
-    <input type="time" id="end3">
-
     <label for="tripType">Tipo de tripulación:</label>
     <select id="tripType" required>
       <option value="2pilotos">2 pilotos</option>
-      <option value="3o4pilotos">3/4 pilotos</option>
+      <option value="3-4pilotos">3/4 pilotos</option>
     </select>
 
     <label for="restBetween">Horas de descanso entre noches:</label>
@@ -116,8 +79,25 @@
       <option value="no">No</option>
     </select>
 
-    <label for="postRest">Horas de descanso posterior:</label>
-    <input type="number" id="postRest" min="0" max="72" required />
+    <label for="postRest">Horas de descanso tras la última noche:</label>
+    <input type="number" id="postRest" min="0" max="96" required />
+
+    <hr />
+
+    <label>PSV 1 - Inicio (L.T):</label>
+    <input type="time" id="start1" required />
+    <label>PSV 1 - Término (L.T):</label>
+    <input type="time" id="end1" required />
+
+    <label>PSV 2 - Inicio (L.T):</label>
+    <input type="time" id="start2" required />
+    <label>PSV 2 - Término (L.T):</label>
+    <input type="time" id="end2" required />
+
+    <label>PSV 3 - Inicio (L.T):</label>
+    <input type="time" id="start3" />
+    <label>PSV 3 - Término (L.T):</label>
+    <input type="time" id="end3" />
 
     <button type="submit">Validar programación</button>
   </form>
@@ -125,12 +105,5 @@
   <div id="result" class="result"></div>
 
   <script src="app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-        .catch(err => console.error('❌ Error al registrar el Service Worker:', err));
-    }
-  </script>
 </body>
 </html>
