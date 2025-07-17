@@ -53,7 +53,6 @@ document.getElementById("nightForm").addEventListener("submit", function (e) {
     return "noche_completa";
   }
 
-  // Clasificar cada PSV
   const noches = [];
   [ [start1, end1], [start2, end2], [start3, end3] ].forEach((psv) => {
     const tipo = clasificarPSV(psv[0], psv[1]);
@@ -61,7 +60,6 @@ document.getElementById("nightForm").addEventListener("submit", function (e) {
     if (tipo !== "no_noche") noches.push(tipo);
   });
 
-  // Evaluar si cumple o no
   if (noches.length > 2) {
     resultDiv.textContent = "❌ No cumple: Se exceden las 2 noches consecutivas permitidas.";
     resultDiv.classList.add('invalid');
@@ -70,7 +68,6 @@ document.getElementById("nightForm").addEventListener("submit", function (e) {
     resultDiv.classList.add('valid');
   }
 
-  // Mostrar detalle por PSV
   const detalleDiv = document.getElementById('detalle');
   let detalleHtml = "<h3>🧭 Clasificación por PSV:</h3><ul>";
   clasificaciones_finales.forEach((tipo, i) => {
