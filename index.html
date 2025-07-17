@@ -74,27 +74,31 @@
   <h1>Validación Nocturna PSV</h1>
 
   <div class="info-box">
-    <strong>ℹ️ Importante:</strong> Según el convenio colectivo, se considera "jornada nocturna" aquella que incluye tiempo dentro del período denominado <strong>zona roja</strong>, es decir, entre las <strong>00:30 y 05:30 hora local</strong> del lugar de operación. <br>
-    Ejemplo: una jornada de 22:00 a 06:00 cuenta como noche. Una jornada de 15:00 a 23:30, no.
+    <strong>ℹ️ Importante:</strong><br>
+    Según el convenio colectivo, solo se consideran <strong>jornadas nocturnas</strong> aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30 y 05:30 hora local</strong> del lugar de operación.<br><br>
+    Ejemplos:<br>
+    - Jornada de 22:00 a 06:00 → ✅ Sí cuenta como noche<br>
+    - Jornada de 20:00 a 00:15 → ❌ No cuenta como noche<br>
+    - Jornada de 01:00 a 07:00 → ✅ Sí cuenta como noche
   </div>
 
   <form id="nightForm">
-    <h3>Jornada 1</h3>
-    <label for="start1">Inicio PSV:</label>
+    <h3>PSV 1</h3>
+    <label for="start1">Inicio PSV (L.T.):</label>
     <input type="time" id="start1" required>
-    <label for="end1">Término PSV:</label>
+    <label for="end1">Término PSV (L.T.):</label>
     <input type="time" id="end1" required>
 
-    <h3>Jornada 2</h3>
-    <label for="start2">Inicio PSV:</label>
+    <h3>PSV 2</h3>
+    <label for="start2">Inicio PSV (L.T.):</label>
     <input type="time" id="start2">
-    <label for="end2">Término PSV:</label>
+    <label for="end2">Término PSV (L.T.):</label>
     <input type="time" id="end2">
 
-    <h3>Jornada 3</h3>
-    <label for="start3">Inicio PSV:</label>
+    <h3>PSV 3</h3>
+    <label for="start3">Inicio PSV (L.T.):</label>
     <input type="time" id="start3">
-    <label for="end3">Término PSV:</label>
+    <label for="end3">Término PSV (L.T.):</label>
     <input type="time" id="end3">
 
     <label for="tripType">Tipo de tripulación:</label>
