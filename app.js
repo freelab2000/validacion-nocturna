@@ -42,17 +42,15 @@ document.getElementById('nightForm').addEventListener('submit', function(e) {
 
     const overlapStart = start > zonaIni ? start : zonaIni;
     const overlapEnd = end < zonaFin ? end : zonaFin;
-    const zonaOverlap = Math.max(0, (overlapEnd - overlapStart) / 60000); // en minutos
+    const zonaOverlap = (overlapEnd - overlapStart) / 60000; // en minutos
 
-    if (zonaOverlap === 0) return "no_noche";
+    if (zonaOverlap <= 0) return "no_noche";
 
-    // Lógica oficial:
-    // - noche_completa: si comienza antes de 00:30 y termina después de 01:30
-    // - media_noche: si termina antes o igual a 01:30 o comienza después de 01:30
+    // Clasificación según cruce de zona roja
     if (start < zonaIni && end > mediaRef) return "noche_completa";
     if (end <= mediaRef || start >= mediaRef) return "media_noche";
 
-    return "noche_completa"; // fallback conservador
+    return "noche_completa"; // fallback
   }
 
   const noches = psvs.map(clasificarPSV).filter(v => v !== "no_noche");
