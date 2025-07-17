@@ -58,6 +58,13 @@
     }
     .valid { background-color: #d9fdd3; color: #155724; }
     .invalid { background-color: #f8d7da; color: #721c24; }
+    #detalle {
+      margin-top: 20px;
+      font-size: 15px;
+    }
+    #detalle ul {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
@@ -66,8 +73,8 @@
   <form id="nightForm">
     <label for="tripType">Tipo de tripulación:</label>
     <select id="tripType" required>
-      <option value="2pilotos">2 pilotos</option>
-      <option value="3-4pilotos">3/4 pilotos</option>
+      <option value="2">2 pilotos</option>
+      <option value="3_4">3/4 pilotos</option>
     </select>
 
     <label for="restBetween">Horas de descanso entre noches:</label>
@@ -79,31 +86,37 @@
       <option value="no">No</option>
     </select>
 
-    <label for="postRest">Horas de descanso tras la última noche:</label>
-    <input type="number" id="postRest" min="0" max="96" required />
+    <label for="postRest">Horas de descanso posteriores:</label>
+    <input type="number" id="postRest" min="0" max="72" required />
 
-    <hr />
+    <hr style="margin-top:30px; margin-bottom:10px;" />
 
-    <label>PSV 1 - Inicio (L.T):</label>
+    <label for="start1">PSV 1 - Inicio (L.T):</label>
     <input type="time" id="start1" required />
-    <label>PSV 1 - Término (L.T):</label>
+    <label for="end1">PSV 1 - Término (L.T):</label>
     <input type="time" id="end1" required />
 
-    <label>PSV 2 - Inicio (L.T):</label>
-    <input type="time" id="start2" required />
-    <label>PSV 2 - Término (L.T):</label>
-    <input type="time" id="end2" required />
+    <label for="start2">PSV 2 - Inicio (L.T):</label>
+    <input type="time" id="start2" />
+    <label for="end2">PSV 2 - Término (L.T):</label>
+    <input type="time" id="end2" />
 
-    <label>PSV 3 - Inicio (L.T):</label>
+    <label for="start3">PSV 3 - Inicio (L.T):</label>
     <input type="time" id="start3" />
-    <label>PSV 3 - Término (L.T):</label>
+    <label for="end3">PSV 3 - Término (L.T):</label>
     <input type="time" id="end3" />
 
     <button type="submit">Validar programación</button>
   </form>
 
   <div id="result" class="result"></div>
+  <div id="detalle"></div>
 
   <script src="app.js"></script>
+
+  <div style="margin-top: 40px; padding: 12px; background-color: #eaf4fc; border-left: 6px solid #0074cc; border-radius: 6px;">
+    <strong>ℹ️ Importante:</strong><br>
+    Según el convenio colectivo, solo se consideran jornadas nocturnas aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30</strong> y <strong>05:30</strong> hora local del lugar de operación.
+  </div>
 </body>
 </html>
