@@ -35,7 +35,7 @@ document.getElementById('nightForm').addEventListener('submit', function(e) {
 
     const zonaIni = toDate(zonaRojaInicio);
     const zonaFin = toDate(zonaRojaFin);
-    if (start > end) zonaFin.setDate(zonaFin.getDate() + 1);
+    if (start > zonaFin) zonaFin.setDate(zonaFin.getDate() + 1);
 
     const mediaRef = toDate(mediaNocheRef);
     if (start > mediaRef) mediaRef.setDate(mediaRef.getDate() + 1);
@@ -44,11 +44,15 @@ document.getElementById('nightForm').addEventListener('submit', function(e) {
     const overlapEnd = end < zonaFin ? end : zonaFin;
     const zonaOverlap = Math.max(0, (overlapEnd - overlapStart) / 60000); // en minutos
 
-    // Clasificación final
     if (zonaOverlap === 0) return "no_noche";
-    if (start < mediaRef && end > toDate(zonaRojaInicio)) return "noche_completa";
+
+    // Lógica oficial:
+    // - noche_completa: si comienza antes de 00:30 y termina después de 01:30
+    // - media_noche: si termina antes o igual a 01:30 o comienza después de 01:30
+    if (start < zonaIni && end > mediaRef) return "noche_completa";
     if (end <= mediaRef || start >= mediaRef) return "media_noche";
-    return "no_noche";
+
+    return "noche_completa"; // fallback conservador
   }
 
   const noches = psvs.map(clasificarPSV).filter(v => v !== "no_noche");
