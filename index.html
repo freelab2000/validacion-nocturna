@@ -52,12 +52,16 @@
       margin-bottom: 5px;
       font-weight: 600;
     }
-    input[type="time"] {
+    select, input[type="time"] {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
+    }
+    .dual-select {
+      display: flex;
+      gap: 5px;
     }
     button {
       margin-top: 30px;
@@ -105,12 +109,18 @@
       <h2>PSV 1</h2>
       <div class="field-row">
         <div class="field">
-          <label for="start1">Inicio (L.T):</label>
-          <input type="time" id="start1" required step="60" value="00:00">
+          <label>Inicio (L.T):</label>
+          <div class="dual-select">
+            <select id="start1_hh"></select>
+            <select id="start1_mm"></select>
+          </div>
         </div>
         <div class="field">
-          <label for="end1">Término (L.T):</label>
-          <input type="time" id="end1" required step="60" value="00:00">
+          <label>Término (L.T):</label>
+          <div class="dual-select">
+            <select id="end1_hh"></select>
+            <select id="end1_mm"></select>
+          </div>
         </div>
       </div>
     </div>
@@ -153,6 +163,24 @@
     <strong>ℹ️ Importante:</strong>
     Según el convenio colectivo, solo se consideran jornadas nocturnas aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30</strong> y <strong>05:30</strong> hora local del lugar de operación.
   </div>
+
+  <script>
+    // Pobladores para selects de hora y minuto
+    const loadSelect = (id, start, end) => {
+      const sel = document.getElementById(id);
+      for (let i = start; i <= end; i++) {
+        const opt = document.createElement("option");
+        opt.value = i.toString().padStart(2, '0');
+        opt.textContent = i.toString().padStart(2, '0');
+        sel.appendChild(opt);
+      }
+    };
+
+    loadSelect("start1_hh", 0, 23);
+    loadSelect("start1_mm", 0, 59);
+    loadSelect("end1_hh", 0, 23);
+    loadSelect("end1_mm", 0, 59);
+  </script>
 
   <script src="app.js"></script>
 </body>
