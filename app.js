@@ -16,9 +16,8 @@ function calcularTiempoZonaRoja(inicio, fin) {
 }
 
 function esMediaNoche(inicio, fin) {
-  return (inicio <= 90 || fin >= 90);
+  return (inicio <= 90 || fin <= 90);
 }
-
 function determinarClasificacion(tiempoZonaRoja, incluyeMediaNoche) {
   if (tiempoZonaRoja >= 150 && incluyeMediaNoche) {
     return { tipo: 'Completa', icono: '🌙' };
