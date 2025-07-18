@@ -51,7 +51,7 @@
       font-weight: 600;
     }
 
-    .field-row input {
+    .field-row select {
       flex: 1;
       padding: 8px;
       border: 1px solid #ccc;
@@ -89,39 +89,43 @@
   <h1>Validación Nocturna PSV</h1>
 
   <form id="nightForm">
+
+    <!-- PSV 1 -->
     <div class="psv-block">
       <h2>PSV 1</h2>
       <div class="field-row">
         <label for="start1">Inicio (L.T):</label>
-        <input type="time" id="start1" required />
+        <select id="start1" required></select>
       </div>
       <div class="field-row">
         <label for="end1">Término (L.T):</label>
-        <input type="time" id="end1" required />
+        <select id="end1" required></select>
       </div>
     </div>
 
+    <!-- PSV 2 -->
     <div class="psv-block">
       <h2>PSV 2</h2>
       <div class="field-row">
         <label for="start2">Inicio (L.T):</label>
-        <input type="time" id="start2" />
+        <select id="start2"></select>
       </div>
       <div class="field-row">
         <label for="end2">Término (L.T):</label>
-        <input type="time" id="end2" />
+        <select id="end2"></select>
       </div>
     </div>
 
+    <!-- PSV 3 -->
     <div class="psv-block">
       <h2>PSV 3</h2>
       <div class="field-row">
         <label for="start3">Inicio (L.T):</label>
-        <input type="time" id="start3" />
+        <select id="start3"></select>
       </div>
       <div class="field-row">
         <label for="end3">Término (L.T):</label>
-        <input type="time" id="end3" />
+        <select id="end3"></select>
       </div>
     </div>
 
@@ -135,6 +139,24 @@
     <strong>ℹ️ Importante:</strong><br>
     Según el convenio colectivo, solo se consideran jornadas nocturnas aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30</strong> y <strong>05:30</strong> hora local del lugar de operación.
   </div>
+
+  <script>
+    const populateSelect = (id) => {
+      const select = document.getElementById(id);
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 15) {
+          const hh = h.toString().padStart(2, '0');
+          const mm = m.toString().padStart(2, '0');
+          const option = document.createElement('option');
+          option.value = `${hh}:${mm}`;
+          option.textContent = `${hh}:${mm}`;
+          select.appendChild(option);
+        }
+      }
+    };
+
+    ['start1','end1','start2','end2','start3','end3'].forEach(populateSelect);
+  </script>
 
   <script src="app.js"></script>
 </body>
