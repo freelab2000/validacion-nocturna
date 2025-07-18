@@ -1,69 +1,112 @@
-document.getElementById("nightForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+function calcularTiempoZonaRoja(inicio, fin) {
+  const zonaRojaInicio = 30;   // 00:30
+  const zonaRojaFin = 330;     // 05:30
+  let tiempoZonaRoja = 0;
 
-  const zonaRojaInicio = toMinutes("00:30");
-  const zonaRojaFin = toMinutes("05:30");
-  const mediaNocheInicio = toMinutes("01:30");
+  if (fin < inicio) fin += 1440; // día siguiente
 
-  const resultados = [];
-  const detalles = [];
-
-  for (let i = 1; i <= 3; i++) {
-    const hStart = document.getElementById(`start${i}_hh`).value;
-    const mStart = document.getElementById(`start${i}_mm`).value;
-    const hEnd = document.getElementById(`end${i}_hh`).value;
-    const mEnd = document.getElementById(`end${i}_mm`).value;
-
-    if (!hStart || !mStart || !hEnd || !mEnd) continue;
-
-    const start = `${hStart}:${mStart}`;
-    const end = `${hEnd}:${mEnd}`;
-
-    const startMin = toMinutes(start);
-    let endMin = toMinutes(end);
-    if (endMin <= startMin) endMin += 1440; // cruza medianoche
-
-    let tiempoEnZonaRoja = 0;
-    for (let t = startMin; t < endMin; t++) {
-      const tMod = t % 1440;
-      if (tMod >= zonaRojaInicio && tMod < zonaRojaFin) {
-        tiempoEnZonaRoja++;
-      }
+  for (let t = inicio; t < fin; t++) {
+    let minutoDelDia = t % 1440;
+    if (minutoDelDia >= zonaRojaInicio && minutoDelDia < zonaRojaFin) {
+      tiempoZonaRoja++;
     }
-
-    const incluyeZonaRoja = tiempoEnZonaRoja > 0;
-    const incluyeMediaNoche = (toMinutes(start) >= mediaNocheInicio || toMinutes(end) <= mediaNocheInicio);
-
-    const esNocturno = (incluyeZonaRoja && incluyeMediaNoche) || (tiempoEnZonaRoja >= 150);
-    resultados.push(esNocturno ? 1 : 0);
-
-    const colorFondo = esNocturno ? '#d9fdd3' : '#f0f0f0';
-    const colorTexto = esNocturno ? '#155724' : '#333';
-
-    detalles.push(`
-      <div style="background-color: ${colorFondo}; color: ${colorTexto}; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
-        <strong>PSV ${i}</strong><br>
-        ▸ Inicio: ${start}<br>
-        ▸ Término: ${end}<br>
-        ▸ Tiempo en zona roja: ${tiempoEnZonaRoja} min<br>
-        ▸ Incluye media noche: ${incluyeMediaNoche ? '✅ Sí' : '❌ No'}<br>
-        ▸ Clasificado como <strong>${esNocturno ? '🌙 NOCTURNO' : '☀️ DIURNO'}</strong>
-      </div>
-    `);
   }
 
-  const totalNoches = resultados.filter(r => r === 1).length;
-  const valido = totalNoches <= 2;
+  return tiempoZonaRoja;
+}
 
-  const resumen = valido
-    ? `<div class="valid">✅ Programación válida: ${totalNoches} noche(s) consecutiva(s)</div>`
-    : `<div class="invalid">❌ Error: Se superan las 2 noches consecutivas permitidas (${totalNoches})</div>`;
+function esMediaNoche(inicio, fin) {
+  return (inicio <= 90 || fin >= 90);
+}
 
-  document.getElementById("resultado").innerHTML = resumen;
-  document.getElementById("detalle").innerHTML = detalles.join("");
-});
+function determinarClasificacion(tiempoZonaRoja, incluyeMediaNoche) {
+  if (tiempoZonaRoja >= 150 || incluyeMediaNoche) {
+    if (tiempoZonaRoja >= 150 && incluyeMediaNoche) {
+      return { tipo: 'Completa', icono: '🌙' };
+    } else {
+      return { tipo: 'Parcial', icono: '🌗' };
+    }
+  }
+  return { tipo: '—', icono: '☀️' };
+}
 
-function toMinutes(hhmm) {
-  const [hh, mm] = hhmm.split(":").map(Number);
-  return hh * 60 + mm;
+function minutosADisplay(minutos) {
+  const h = Math.floor(minutos / 60).toString().padStart(2, '0');
+  const m = (minutos % 60).toString().padStart(2, '0');
+  return `${h}:${m}`;
+}
+
+function mostrarResultado(psv, index) {
+  const resultadoDiv = document.createElement("div");
+  resultadoDiv.classList.add("resultado");
+
+  const tiempoZonaRoja = calcularTiempoZonaRoja(psv.inicio, psv.fin);
+  const incluyeMedia = esMediaNoche(psv.inicio, psv.fin);
+  const clasificacion = determinarClasificacion(tiempoZonaRoja, incluyeMedia);
+
+  resultadoDiv.innerHTML = `
+    <strong>PSV ${index + 1}</strong>
+    <ul>
+      <li><span>▸ Inicio:</span> ${minutosADisplay(psv.inicio)}</li>
+      <li><span>▸ Término:</span> ${minutosADisplay(psv.fin)}</li>
+      <li><span>▸ Tiempo en zona roja:</span> ${tiempoZonaRoja} min</li>
+      <li><span>▸ Media noche:</span> ${incluyeMedia ? "✅" : "❌"}</li>
+      <li><span>▸ Noche:</span> ${clasificacion.tipo} ${clasificacion.icono}</li>
+    </ul>
+  `;
+
+  resultadoDiv.style.backgroundColor =
+    clasificacion.tipo === '—' ? "#e0e0e0" : "#d7f8d0";
+
+  return { resultadoDiv, esNoche: clasificacion.tipo !== '—' };
+}
+
+function validarProgramacion() {
+  const inputs = document.querySelectorAll(".psv");
+  const resultados = document.getElementById("resultados");
+  resultados.innerHTML = "";
+
+  const psvs = [];
+
+  inputs.forEach((psv) => {
+    const inicio = parseInt(psv.querySelector(".inicio-horas").value) * 60 +
+                   parseInt(psv.querySelector(".inicio-minutos").value);
+    const fin = parseInt(psv.querySelector(".fin-horas").value) * 60 +
+                parseInt(psv.querySelector(".fin-minutos").value);
+    psvs.push({ inicio, fin });
+  });
+
+  let nochesConsecutivas = 0;
+  let maxConsecutivas = 0;
+
+  const detalles = [];
+
+  for (let i = 0; i < psvs.length; i++) {
+    const { resultadoDiv, esNoche } = mostrarResultado(psvs[i], i);
+    resultados.appendChild(resultadoDiv);
+
+    if (esNoche) {
+      nochesConsecutivas++;
+      if (nochesConsecutivas > maxConsecutivas) {
+        maxConsecutivas = nochesConsecutivas;
+      }
+    } else {
+      nochesConsecutivas = 0;
+    }
+  }
+
+  const validacionFinal = document.createElement("div");
+  validacionFinal.classList.add("mensaje-validacion");
+
+  if (maxConsecutivas <= 2) {
+    validacionFinal.innerHTML = `✅ Programación válida: ${maxConsecutivas} noche(s) consecutiva(s)`;
+    validacionFinal.style.backgroundColor = "#d4f4d7";
+    validacionFinal.style.color = "#1b5e20";
+  } else {
+    validacionFinal.innerHTML = `❌ Programación inválida: ${maxConsecutivas} noches consecutivas (máx. 2 permitidas)`;
+    validacionFinal.style.backgroundColor = "#fddede";
+    validacionFinal.style.color = "#b71c1c";
+  }
+
+  resultados.prepend(validacionFinal);
 }
