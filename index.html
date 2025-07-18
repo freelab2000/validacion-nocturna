@@ -52,7 +52,7 @@
       margin-bottom: 5px;
       font-weight: 600;
     }
-    select, input[type="time"] {
+    select {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
@@ -129,12 +129,18 @@
       <h2>PSV 2</h2>
       <div class="field-row">
         <div class="field">
-          <label for="start2">Inicio (L.T):</label>
-          <input type="time" id="start2" step="60" value="00:00">
+          <label>Inicio (L.T):</label>
+          <div class="dual-select">
+            <select id="start2_hh"></select>
+            <select id="start2_mm"></select>
+          </div>
         </div>
         <div class="field">
-          <label for="end2">Término (L.T):</label>
-          <input type="time" id="end2" step="60" value="00:00">
+          <label>Término (L.T):</label>
+          <div class="dual-select">
+            <select id="end2_hh"></select>
+            <select id="end2_mm"></select>
+          </div>
         </div>
       </div>
     </div>
@@ -143,12 +149,18 @@
       <h2>PSV 3</h2>
       <div class="field-row">
         <div class="field">
-          <label for="start3">Inicio (L.T):</label>
-          <input type="time" id="start3" step="60" value="00:00">
+          <label>Inicio (L.T):</label>
+          <div class="dual-select">
+            <select id="start3_hh"></select>
+            <select id="start3_mm"></select>
+          </div>
         </div>
         <div class="field">
-          <label for="end3">Término (L.T):</label>
-          <input type="time" id="end3" step="60" value="00:00">
+          <label>Término (L.T):</label>
+          <div class="dual-select">
+            <select id="end3_hh"></select>
+            <select id="end3_mm"></select>
+          </div>
         </div>
       </div>
     </div>
@@ -165,7 +177,6 @@
   </div>
 
   <script>
-    // Pobladores para selects de hora y minuto
     const loadSelect = (id, start, end) => {
       const sel = document.getElementById(id);
       for (let i = start; i <= end; i++) {
@@ -176,10 +187,12 @@
       }
     };
 
-    loadSelect("start1_hh", 0, 23);
-    loadSelect("start1_mm", 0, 59);
-    loadSelect("end1_hh", 0, 23);
-    loadSelect("end1_mm", 0, 59);
+    for (let i = 1; i <= 3; i++) {
+      loadSelect(`start${i}_hh`, 0, 23);
+      loadSelect(`start${i}_mm`, 0, 59);
+      loadSelect(`end${i}_hh`, 0, 23);
+      loadSelect(`end${i}_mm`, 0, 59);
+    }
   </script>
 
   <script src="app.js"></script>
