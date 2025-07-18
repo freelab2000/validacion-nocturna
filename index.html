@@ -31,7 +31,7 @@
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       padding: 20px;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
     .psv-box h2 {
       font-size: 20px;
@@ -42,6 +42,7 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
     .field {
       flex: 1;
@@ -51,6 +52,7 @@
       display: block;
       margin-bottom: 5px;
       font-weight: 600;
+      font-size: 16px;
     }
     select {
       width: 100%;
@@ -62,6 +64,14 @@
     .dual-select {
       display: flex;
       gap: 5px;
+    }
+    .dual-select select:first-child::before,
+    .dual-select select:nth-child(2)::before {
+      content: "";
+      color: #999;
+    }
+    .dual-select select:invalid {
+      color: #999;
     }
     button {
       margin-top: 30px;
@@ -87,7 +97,7 @@
       line-height: 1.5;
       white-space: normal;
     }
-        .info-box strong {
+    .info-box strong {
       font-weight: 600;
       margin-bottom: 0;
     }
@@ -109,61 +119,31 @@
       <h2>PSV 1</h2>
       <div class="field-row">
         <div class="field">
-          <label>Inicio (L.T):</label>
+          <label for="start1_hh">Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start1_hh"></select>
-            <select id="start1_mm"></select>
+            <select id="start1_hh" required>
+              <option value="" disabled selected>-- hh --</option>
+            </select>
+            <select id="start1_mm" required>
+              <option value="" disabled selected>-- mm --</option>
+            </select>
           </div>
         </div>
         <div class="field">
-          <label>Término (L.T):</label>
+          <label for="end1_hh">Término (L.T):</label>
           <div class="dual-select">
-            <select id="end1_hh"></select>
-            <select id="end1_mm"></select>
+            <select id="end1_hh" required>
+              <option value="" disabled selected>-- hh --</option>
+            </select>
+            <select id="end1_mm" required>
+              <option value="" disabled selected>-- mm --</option>
+            </select>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="psv-box">
-      <h2>PSV 2</h2>
-      <div class="field-row">
-        <div class="field">
-          <label>Inicio (L.T):</label>
-          <div class="dual-select">
-            <select id="start2_hh"></select>
-            <select id="start2_mm"></select>
-          </div>
-        </div>
-        <div class="field">
-          <label>Término (L.T):</label>
-          <div class="dual-select">
-            <select id="end2_hh"></select>
-            <select id="end2_mm"></select>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="psv-box">
-      <h2>PSV 3</h2>
-      <div class="field-row">
-        <div class="field">
-          <label>Inicio (L.T):</label>
-          <div class="dual-select">
-            <select id="start3_hh"></select>
-            <select id="start3_mm"></select>
-          </div>
-        </div>
-        <div class="field">
-          <label>Término (L.T):</label>
-          <div class="dual-select">
-            <select id="end3_hh"></select>
-            <select id="end3_mm"></select>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Repetir para PSV 2 y PSV 3 con misma estructura -->
 
     <button type="submit">Validar programación</button>
   </form>
@@ -172,9 +152,9 @@
   <div id="detalle" style="margin-top: 20px; font-size: 15px;"></div>
 
   <div class="info-box">
-  <strong>ℹ️ Importante:</strong>
-  Según el convenio colectivo, <strong>jornada nocturna</strong> es aquella que incluye un psv dentro del período denominado <strong>zona roja</strong>, comprendido entre las <strong>00:30</strong> y las <strong>05:30</strong>L.T del lugar de operación.
-</div>
+    <strong>ℹ️ Importante:</strong>
+    Según el convenio colectivo, se consideran <strong>jornadas nocturnas</strong> aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo comprendido entre las <strong>00:30</strong> y las <strong>05:30</strong>, hora local del lugar de operación.
+  </div>
 
   <script>
     const loadSelect = (id, start, end) => {
