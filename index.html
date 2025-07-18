@@ -26,7 +26,7 @@
       font-weight: 700;
       margin-bottom: 30px;
     }
-    .psv-box {
+    .psv-box.psv {
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
@@ -108,61 +108,61 @@
   <h1>Validación Nocturna PSV</h1>
 
   <form id="nightForm">
-    <div class="psv-box">
+    <div class="psv-box psv">
       <h2>PSV 1</h2>
       <div class="field-row">
         <div class="field">
           <label>Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start1_hh" required><option value="" disabled selected>-- hh --</option></select>
-            <select id="start1_mm" required><option value="" disabled selected>-- mm --</option></select>
+            <select id="start1_hh" class="inicio-horas" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="start1_mm" class="inicio-minutos" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
         <div class="field">
           <label>Término (L.T):</label>
           <div class="dual-select">
-            <select id="end1_hh" required><option value="" disabled selected>-- hh --</option></select>
-            <select id="end1_mm" required><option value="" disabled selected>-- mm --</option></select>
+            <select id="end1_hh" class="fin-horas" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="end1_mm" class="fin-minutos" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="psv-box">
+    <div class="psv-box psv">
       <h2>PSV 2</h2>
       <div class="field-row">
         <div class="field">
           <label>Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start2_hh" required><option value="" disabled selected>-- hh --</option></select>
-            <select id="start2_mm" required><option value="" disabled selected>-- mm --</option></select>
+            <select id="start2_hh" class="inicio-horas" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="start2_mm" class="inicio-minutos" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
         <div class="field">
           <label>Término (L.T):</label>
           <div class="dual-select">
-            <select id="end2_hh" required><option value="" disabled selected>-- hh --</option></select>
-            <select id="end2_mm" required><option value="" disabled selected>-- mm --</option></select>
+            <select id="end2_hh" class="fin-horas" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="end2_mm" class="fin-minutos" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="psv-box">
+    <div class="psv-box psv">
       <h2>PSV 3</h2>
       <div class="field-row">
         <div class="field">
           <label>Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start3_hh" required><option value="" disabled selected>-- hh --</option></select>
-            <select id="start3_mm" required><option value="" disabled selected>-- mm --</option></select>
+            <select id="start3_hh" class="inicio-horas" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="start3_mm" class="inicio-minutos" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
         <div class="field">
           <label>Término (L.T):</label>
           <div class="dual-select">
-            <select id="end3_hh" required><option value="" disabled selected>-- hh --</option></select>
-            <select id="end3_mm" required><option value="" disabled selected>-- mm --</option></select>
+            <select id="end3_hh" class="fin-horas" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="end3_mm" class="fin-minutos" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
       </div>
