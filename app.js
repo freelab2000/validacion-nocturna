@@ -20,12 +20,10 @@ function esMediaNoche(inicio, fin) {
 }
 
 function determinarClasificacion(tiempoZonaRoja, incluyeMediaNoche) {
-  if (tiempoZonaRoja >= 150 || incluyeMediaNoche) {
-    if (tiempoZonaRoja >= 150 && incluyeMediaNoche) {
-      return { tipo: 'Completa', icono: '🌙' };
-    } else {
-      return { tipo: 'Parcial', icono: '🌗' };
-    }
+  if (tiempoZonaRoja >= 150 && incluyeMediaNoche) {
+    return { tipo: 'Completa', icono: '🌙' };
+  } else if (tiempoZonaRoja >= 150 || incluyeMediaNoche) {
+    return { tipo: 'Parcial', icono: '🌗' };
   }
   return { tipo: '—', icono: '☀️' };
 }
@@ -36,54 +34,58 @@ function minutosADisplay(minutos) {
   return `${h}:${m}`;
 }
 
-function mostrarResultado(psv, index) {
-  const resultadoDiv = document.createElement("div");
-  resultadoDiv.classList.add("resultado");
+function obtenerMinutos(id_hh, id_mm) {
+  const hh = parseInt(document.getElementById(id_hh).value);
+  const mm = parseInt(document.getElementById(id_mm).value);
+  return hh * 60 + mm;
+}
 
-  const tiempoZonaRoja = calcularTiempoZonaRoja(psv.inicio, psv.fin);
-  const incluyeMedia = esMediaNoche(psv.inicio, psv.fin);
-  const clasificacion = determinarClasificacion(tiempoZonaRoja, incluyeMedia);
+function mostrarResultado(index, inicioMin, finMin) {
+  const div = document.createElement("div");
+  div.classList.add("result");
 
-  resultadoDiv.innerHTML = `
-    <strong>PSV ${index + 1}</strong>
+  const tiempoZR = calcularTiempoZonaRoja(inicioMin, finMin);
+  const incluyeMN = esMediaNoche(inicioMin, finMin);
+  const clasificacion = determinarClasificacion(tiempoZR, incluyeMN);
+
+  div.innerHTML = `
+    <strong>PSV ${index}</strong>
     <ul>
-      <li><span>▸ Inicio:</span> ${minutosADisplay(psv.inicio)}</li>
-      <li><span>▸ Término:</span> ${minutosADisplay(psv.fin)}</li>
-      <li><span>▸ Tiempo en zona roja:</span> ${tiempoZonaRoja} min</li>
-      <li><span>▸ Media noche:</span> ${incluyeMedia ? "✅" : "❌"}</li>
+      <li><span>▸ Inicio:</span> ${minutosADisplay(inicioMin)}</li>
+      <li><span>▸ Término:</span> ${minutosADisplay(finMin)}</li>
+      <li><span>▸ Tiempo en zona roja:</span> ${tiempoZR} min</li>
+      <li><span>▸ Media noche:</span> ${incluyeMN ? '✅' : '❌'}</li>
       <li><span>▸ Noche:</span> ${clasificacion.tipo} ${clasificacion.icono}</li>
     </ul>
   `;
 
-  resultadoDiv.style.backgroundColor =
-    clasificacion.tipo === '—' ? "#e0e0e0" : "#d7f8d0";
+  div.style.backgroundColor = clasificacion.tipo === '—' ? "#e0e0e0" : "#d7f8d0";
 
-  return { resultadoDiv, esNoche: clasificacion.tipo !== '—' };
+  return { div, esNoche: clasificacion.tipo !== '—' };
 }
 
-function validarProgramacion() {
-  const inputs = document.querySelectorAll(".psv");
-  const resultados = document.getElementById("resultados");
-  resultados.innerHTML = "";
+document.getElementById("nightForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const resultado = document.getElementById("resultado");
+  const detalle = document.getElementById("detalle");
+  resultado.innerHTML = "";
+  detalle.innerHTML = "";
 
   const psvs = [];
 
-  inputs.forEach((psv) => {
-    const inicio = parseInt(psv.querySelector(".inicio-horas").value) * 60 +
-                   parseInt(psv.querySelector(".inicio-minutos").value);
-    const fin = parseInt(psv.querySelector(".fin-horas").value) * 60 +
-                parseInt(psv.querySelector(".fin-minutos").value);
+  for (let i = 1; i <= 3; i++) {
+    const inicio = obtenerMinutos(`start${i}_hh`, `start${i}_mm`);
+    const fin = obtenerMinutos(`end${i}_hh`, `end${i}_mm`);
     psvs.push({ inicio, fin });
-  });
+  }
 
   let nochesConsecutivas = 0;
   let maxConsecutivas = 0;
 
-  const detalles = [];
-
-  for (let i = 0; i < psvs.length; i++) {
-    const { resultadoDiv, esNoche } = mostrarResultado(psvs[i], i);
-    resultados.appendChild(resultadoDiv);
+  psvs.forEach((psv, i) => {
+    const { div, esNoche } = mostrarResultado(i + 1, psv.inicio, psv.fin);
+    detalle.appendChild(div);
 
     if (esNoche) {
       nochesConsecutivas++;
@@ -93,20 +95,16 @@ function validarProgramacion() {
     } else {
       nochesConsecutivas = 0;
     }
-  }
+  });
 
-  const validacionFinal = document.createElement("div");
-  validacionFinal.classList.add("mensaje-validacion");
-
+  const validacion = document.createElement("div");
   if (maxConsecutivas <= 2) {
-    validacionFinal.innerHTML = `✅ Programación válida: ${maxConsecutivas} noche(s) consecutiva(s)`;
-    validacionFinal.style.backgroundColor = "#d4f4d7";
-    validacionFinal.style.color = "#1b5e20";
+    validacion.classList.add("valid");
+    validacion.innerHTML = `✅ Programación válida: ${maxConsecutivas} noche(s) consecutiva(s)`;
   } else {
-    validacionFinal.innerHTML = `❌ Programación inválida: ${maxConsecutivas} noches consecutivas (máx. 2 permitidas)`;
-    validacionFinal.style.backgroundColor = "#fddede";
-    validacionFinal.style.color = "#b71c1c";
+    validacion.classList.add("invalid");
+    validacion.innerHTML = `❌ Programación inválida: ${maxConsecutivas} noches consecutivas (máx. 2 permitidas)`;
   }
 
-  resultados.prepend(validacionFinal);
-}
+  resultado.appendChild(validacion);
+});
