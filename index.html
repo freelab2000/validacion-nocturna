@@ -38,15 +38,23 @@
       color: #003366;
       margin-bottom: 15px;
     }
+    .field-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .field {
+      flex: 1;
+      min-width: 130px;
+    }
     label {
       display: block;
-      margin-top: 10px;
+      margin-bottom: 5px;
       font-weight: 600;
     }
     input[type="time"] {
       width: 100%;
       padding: 10px;
-      margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
@@ -93,26 +101,44 @@
   <form id="nightForm">
     <div class="psv-box">
       <h2>PSV 1</h2>
-      <label for="start1">Inicio (L.T):</label>
-      <input type="time" id="start1" required step="60">
-      <label for="end1">Término (L.T):</label>
-      <input type="time" id="end1" required step="60">
+      <div class="field-row">
+        <div class="field">
+          <label for="start1">Inicio (L.T):</label>
+          <input type="time" id="start1" required step="60">
+        </div>
+        <div class="field">
+          <label for="end1">Término (L.T):</label>
+          <input type="time" id="end1" required step="60">
+        </div>
+      </div>
     </div>
 
     <div class="psv-box">
       <h2>PSV 2</h2>
-      <label for="start2">Inicio (L.T):</label>
-      <input type="time" id="start2" step="60">
-      <label for="end2">Término (L.T):</label>
-      <input type="time" id="end2" step="60">
+      <div class="field-row">
+        <div class="field">
+          <label for="start2">Inicio (L.T):</label>
+          <input type="time" id="start2" step="60">
+        </div>
+        <div class="field">
+          <label for="end2">Término (L.T):</label>
+          <input type="time" id="end2" step="60">
+        </div>
+      </div>
     </div>
 
     <div class="psv-box">
       <h2>PSV 3</h2>
-      <label for="start3">Inicio (L.T):</label>
-      <input type="time" id="start3" step="60">
-      <label for="end3">Término (L.T):</label>
-      <input type="time" id="end3" step="60">
+      <div class="field-row">
+        <div class="field">
+          <label for="start3">Inicio (L.T):</label>
+          <input type="time" id="start3" step="60">
+        </div>
+        <div class="field">
+          <label for="end3">Término (L.T):</label>
+          <input type="time" id="end3" step="60">
+        </div>
+      </div>
     </div>
 
     <button type="submit">Validar programación</button>
