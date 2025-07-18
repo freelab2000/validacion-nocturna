@@ -40,12 +40,11 @@
     }
     .field-row {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 15px;
     }
     .field {
-      flex: 1;
-      min-width: 130px;
+      width: 100%;
     }
     label {
       display: block;
@@ -58,9 +57,10 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
+      background-color: #f9f9f9;
     }
     select:invalid {
-      color: #999;
+      color: #888;
     }
     .dual-select {
       display: flex;
@@ -114,15 +114,15 @@
         <div class="field">
           <label>Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start1_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="start1_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
+            <select id="start1_hh" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="start1_mm" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
         <div class="field">
           <label>Término (L.T):</label>
           <div class="dual-select">
-            <select id="end1_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="end1_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
+            <select id="end1_hh" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="end1_mm" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
       </div>
@@ -134,15 +134,15 @@
         <div class="field">
           <label>Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start2_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="start2_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
+            <select id="start2_hh" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="start2_mm" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
         <div class="field">
           <label>Término (L.T):</label>
           <div class="dual-select">
-            <select id="end2_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="end2_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
+            <select id="end2_hh" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="end2_mm" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
       </div>
@@ -154,15 +154,15 @@
         <div class="field">
           <label>Inicio (L.T):</label>
           <div class="dual-select">
-            <select id="start3_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="start3_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
+            <select id="start3_hh" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="start3_mm" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
         <div class="field">
           <label>Término (L.T):</label>
           <div class="dual-select">
-            <select id="end3_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="end3_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
+            <select id="end3_hh" required><option value="" disabled selected>-- hh --</option></select>
+            <select id="end3_mm" required><option value="" disabled selected>-- mm --</option></select>
           </div>
         </div>
       </div>
