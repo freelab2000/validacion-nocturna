@@ -9,10 +9,15 @@ document.getElementById("nightForm").addEventListener("submit", function (e) {
   const detalles = [];
 
   for (let i = 1; i <= 3; i++) {
-    const start = document.getElementById(`start${i}`).value;
-    const end = document.getElementById(`end${i}`).value;
+    const hStart = document.getElementById(`start${i}_hh`).value;
+    const mStart = document.getElementById(`start${i}_mm`).value;
+    const hEnd = document.getElementById(`end${i}_hh`).value;
+    const mEnd = document.getElementById(`end${i}_mm`).value;
 
-    if (!start || !end) continue;
+    if (!hStart || !mStart || !hEnd || !mEnd) continue;
+
+    const start = `${hStart}:${mStart}`;
+    const end = `${hEnd}:${mEnd}`;
 
     const startMin = toMinutes(start);
     let endMin = toMinutes(end);
