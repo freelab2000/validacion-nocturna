@@ -16,26 +16,48 @@
       background-color: #f4f7fa;
       color: #1a1a1a;
       padding: 20px;
-      max-width: 700px;
+      max-width: 720px;
       margin: auto;
     }
+
     h1 {
       text-align: center;
       color: #003366;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
-    label {
-      display: block;
-      margin-top: 15px;
+
+    .psv-block {
+      background-color: #ffffff;
+      border: 1px solid #d1dbe3;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .psv-block h2 {
+      font-size: 18px;
+      color: #003366;
+      margin-bottom: 10px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .field-row label {
+      flex: 1;
       font-weight: 600;
     }
-    input[type="time"] {
-      width: 100%;
+
+    .field-row select {
+      flex: 1;
       padding: 8px;
-      margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
+
     button {
       margin-top: 25px;
       background-color: #003366;
@@ -47,70 +69,95 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #0055aa;
     }
+
     .result {
       margin-top: 30px;
       padding: 15px;
       border-radius: 8px;
       font-weight: 600;
     }
+
     .valid { background-color: #d9fdd3; color: #155724; }
     .invalid { background-color: #f8d7da; color: #721c24; }
-    .info {
-      margin-top: 40px;
-      font-size: 14px;
-      background: #eaf4ff;
-      border-left: 4px solid #0077cc;
-      padding: 12px;
-      border-radius: 6px;
-    }
   </style>
 </head>
 <body>
   <h1>Validación Nocturna PSV</h1>
 
   <form id="nightForm">
-    <h3>PSV 1</h3>
-    <label for="start1">Inicio PSV (L.T):</label>
-    <input type="time" id="start1" required step="60" />
 
-    <label for="end1">Término PSV (L.T):</label>
-    <input type="time" id="end1" required step="60" />
+    <!-- PSV 1 -->
+    <div class="psv-block">
+      <h2>PSV 1</h2>
+      <div class="field-row">
+        <label for="start1">Inicio (L.T):</label>
+        <select id="start1" required></select>
+      </div>
+      <div class="field-row">
+        <label for="end1">Término (L.T):</label>
+        <select id="end1" required></select>
+      </div>
+    </div>
 
-    <h3>PSV 2</h3>
-    <label for="start2">Inicio PSV (L.T):</label>
-    <input type="time" id="start2" required step="60" />
+    <!-- PSV 2 -->
+    <div class="psv-block">
+      <h2>PSV 2</h2>
+      <div class="field-row">
+        <label for="start2">Inicio (L.T):</label>
+        <select id="start2"></select>
+      </div>
+      <div class="field-row">
+        <label for="end2">Término (L.T):</label>
+        <select id="end2"></select>
+      </div>
+    </div>
 
-    <label for="end2">Término PSV (L.T):</label>
-    <input type="time" id="end2" required step="60" />
-
-    <h3>PSV 3</h3>
-    <label for="start3">Inicio PSV (L.T):</label>
-    <input type="time" id="start3" required step="60" />
-
-    <label for="end3">Término PSV (L.T):</label>
-    <input type="time" id="end3" required step="60" />
+    <!-- PSV 3 -->
+    <div class="psv-block">
+      <h2>PSV 3</h2>
+      <div class="field-row">
+        <label for="start3">Inicio (L.T):</label>
+        <select id="start3"></select>
+      </div>
+      <div class="field-row">
+        <label for="end3">Término (L.T):</label>
+        <select id="end3"></select>
+      </div>
+    </div>
 
     <button type="submit">Validar programación</button>
   </form>
 
   <div id="result" class="result"></div>
+  <div id="detalle" style="margin-top: 20px; font-size: 15px;"></div>
 
-  <div class="info">
-    ℹ️ <strong>Importante:</strong><br>
-    Según el convenio colectivo, solo se consideran jornadas nocturnas aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30</strong> y <strong>05:30</strong> hora local del lugar de operación.<br><br>
-    Se considera <strong>media noche</strong> todo PSV que termine hasta las <strong>01:30</strong> o comience desde las <strong>01:30</strong>. Además, cualquier PSV con más de 2h 30min dentro del tramo 00:30–05:30 también se considera noche.
+  <div style="margin-top: 40px; padding: 12px; background-color: #eaf4fc; border-left: 6px solid #0074cc; border-radius: 6px;">
+    <strong>ℹ️ Importante:</strong><br>
+    Según el convenio colectivo, solo se consideran jornadas nocturnas aquellas que incluyen tiempo dentro del período denominado <strong>zona roja</strong>, definido como el tramo entre las <strong>00:30</strong> y <strong>05:30</strong> hora local del lugar de operación.
   </div>
 
-  <script src="app.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-        .catch(err => console.error('❌ Error al registrar el Service Worker:', err));
-    }
+    const populateSelect = (id) => {
+      const select = document.getElementById(id);
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 15) {
+          const hh = h.toString().padStart(2, '0');
+          const mm = m.toString().padStart(2, '0');
+          const option = document.createElement('option');
+          option.value = `${hh}:${mm}`;
+          option.textContent = `${hh}:${mm}`;
+          select.appendChild(option);
+        }
+      }
+    };
+
+    ['start1','end1','start2','end2','start3','end3'].forEach(populateSelect);
   </script>
+
+  <script src="app.js"></script>
 </body>
 </html>
