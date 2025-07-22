@@ -18,6 +18,7 @@ function calcularTiempoZonaRoja(inicio, fin) {
 function esMediaNoche(inicio, fin) {
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
+
   return (
     (inicioD <= 90 && finD <= 90) || // Caso 1: ambos antes de 01:30
     (inicioD <= 90 && finD > 90 && inicio < fin) || // Caso 2: empieza antes y termina después
@@ -136,3 +137,9 @@ function validarProgramacion() {
   mensaje.style.borderRadius = "8px";
   resultado.appendChild(mensaje);
 }
+
+// ✅ Asocia la validación al envío del formulario
+document.getElementById("nightForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  validarProgramacion();
+});
