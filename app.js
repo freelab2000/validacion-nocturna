@@ -15,16 +15,20 @@ function calcularTiempoZonaRoja(inicio, fin) {
   return tiempoZonaRoja;
 }
 
-function esMediaNoche(inicio, fin) {
-  return (inicio <= 90 || fin <= 90);
-}
-function determinarClasificacion(tiempoZonaRoja, incluyeMediaNoche) {
-  if (tiempoZonaRoja >= 150 && incluyeMediaNoche) {
-    return { tipo: 'Completa', icono: '🌙' };
-  } else if (tiempoZonaRoja >= 150 || incluyeMediaNoche) {
-    return { tipo: 'Parcial', icono: '🌗' };
+function determinarClasificacion(inicio, fin, tiempoZonaRoja) {
+  const incluyeZonaRoja = tiempoZonaRoja > 0;
+
+  // Reglas de media noche según convenio:
+  const esMediaNoche = (inicio < 90 || fin <= 90 || inicio >= 90); // siempre aplica si toca el umbral
+  const cruza130 = inicio < 90 && fin > 90; // noche completa si atraviesa la 01:30
+
+  if (incluyeZonaRoja && cruza130) {
+    return { tipo: 'Completa', icono: '🌙', esNoche: true, mediaNoche: true };
+  } else if (incluyeZonaRoja && esMediaNoche) {
+    return { tipo: 'Parcial', icono: '🌗', esNoche: true, mediaNoche: true };
   }
-  return { tipo: '—', icono: '☀️' };
+
+  return { tipo: '—', icono: '☀️', esNoche: false, mediaNoche: false };
 }
 
 function minutosADisplay(minutos) {
@@ -44,8 +48,7 @@ function mostrarResultado(index, inicioMin, finMin) {
   div.classList.add("result");
 
   const tiempoZR = calcularTiempoZonaRoja(inicioMin, finMin);
-  const incluyeMN = esMediaNoche(inicioMin, finMin);
-  const clasificacion = determinarClasificacion(tiempoZR, incluyeMN);
+  const clasificacion = determinarClasificacion(inicioMin, finMin, tiempoZR);
 
   div.innerHTML = `
     <strong>PSV ${index}</strong>
@@ -53,14 +56,14 @@ function mostrarResultado(index, inicioMin, finMin) {
       <li><span>▸ Inicio:</span> ${minutosADisplay(inicioMin)}</li>
       <li><span>▸ Término:</span> ${minutosADisplay(finMin)}</li>
       <li><span>▸ Tiempo en zona roja:</span> ${tiempoZR} min</li>
-      <li><span>▸ Media noche:</span> ${incluyeMN ? '✅' : '❌'}</li>
+      <li><span>▸ Media noche:</span> ${clasificacion.mediaNoche ? '✅' : '❌'}</li>
       <li><span>▸ Noche:</span> ${clasificacion.tipo} ${clasificacion.icono}</li>
     </ul>
   `;
 
   div.style.backgroundColor = clasificacion.tipo === '—' ? "#e0e0e0" : "#d7f8d0";
 
-  return { div, esNoche: clasificacion.tipo !== '—' };
+  return { div, esNoche: clasificacion.esNoche };
 }
 
 document.getElementById("nightForm").addEventListener("submit", function (e) {
