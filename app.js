@@ -15,31 +15,21 @@ function calcularTiempoZonaRoja(inicio, fin) {
   return tiempoZonaRoja;
 }
 
-function esMediaNoche(inicio, fin) {
-  const inicioD = inicio % 1440;
-  const finD = fin % 1440;
-  const abarcaZonaRoja = calcularTiempoZonaRoja(inicio, fin) > 0;
-
-  // Caso 1: termina antes de 01:30 y abarca zona roja
-  if (finD <= 90 && abarcaZonaRoja) return true;
-
-  // Caso 2: comienza antes y termina después de 01:30, abarcando zona roja
-  if (inicioD <= 90 && finD > 90 && abarcaZonaRoja) return true;
-
-  // Caso 3: comienza después de 01:30 pero dentro de zona roja
-  if (inicioD > 90 && inicioD < 330 && abarcaZonaRoja) return true;
-
-  return false;
-}
-
 function determinarClasificacion(inicio, fin) {
   const tiempoZonaRoja = calcularTiempoZonaRoja(inicio, fin);
-  const mediaNoche = esMediaNoche(inicio, fin);
+  const inicioD = inicio % 1440;
+  const finD = fin % 1440;
 
-  if (tiempoZonaRoja >= 150 && mediaNoche) {
+  const esMediaNoche =
+    (inicioD > 90) ||                             // Comienza después de 01:30
+    (inicioD <= 90 && finD <= 90);                // Comienza y termina antes de 01:30
+
+  const esNocheCompleta = (inicioD <= 90 && finD > 90); // Comienza antes y termina después de 01:30
+
+  if (esNocheCompleta) {
     return { tipo: 'Completa', icono: '🌙' };
   }
-  if (mediaNoche) {
+  if (esMediaNoche) {
     return { tipo: 'Media', icono: '✅' };
   }
   if (tiempoZonaRoja >= 150) {
@@ -73,10 +63,10 @@ function mostrarResultado(index, inicio, fin) {
 
   if (clasif.tipo === 'Completa') {
     contenido += `<li><span>▸ Noche:</span> Completa ${clasif.icono}</li>`;
+  } else if (clasif.tipo === 'Media') {
+    contenido += `<li><span>▸ Media noche:</span> ${clasif.icono}</li>`;
   } else if (clasif.tipo === 'Parcial') {
     contenido += `<li><span>▸ Noche:</span> Parcial ${clasif.icono}</li>`;
-  } else if (clasif.tipo === 'Media') {
-    contenido += `<li><span>▸ Media noche:</span> ✅</li>`;
   } else {
     contenido += `<li><span>▸ Noche:</span> — ${clasif.icono}</li>`;
   }
@@ -85,7 +75,7 @@ function mostrarResultado(index, inicio, fin) {
   div.innerHTML = contenido;
   div.style.backgroundColor = fondo;
 
-  return { div, esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Parcial' };
+  return { div, esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Media' || clasif.tipo === 'Parcial' };
 }
 
 function validarProgramacion() {
@@ -117,7 +107,9 @@ function validarProgramacion() {
 
     if (esNoche) {
       nochesConsecutivas++;
-      maxConsecutivas = Math.max(maxConsecutivas, nochesConsecutivas);
+      if (nochesConsecutivas > maxConsecutivas) {
+        maxConsecutivas = nochesConsecutivas;
+      }
     } else {
       nochesConsecutivas = 0;
     }
@@ -138,3 +130,9 @@ function validarProgramacion() {
   mensaje.style.borderRadius = "8px";
   resultado.appendChild(mensaje);
 }
+
+// Asociar el botón con la función
+document.getElementById("nightForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  validarProgramacion();
+});
