@@ -20,17 +20,22 @@ function determinarClasificacion(inicio, fin) {
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
 
-  // ✅ NUEVA CONDICIÓN: Noche completa si el tramo incluye el minuto 90 (01:30)
-  if ((fin - inicio > 0) && ((inicioD <= 90 && finD > 90) || (inicioD > 90 && fin > (inicio + (1440 - inicioD) + 90)))) {
+  // Regla 1: Noche completa si inicia antes de 01:30 y termina después de 01:30
+  if (inicioD <= 90 && finD > 90 && inicio < fin) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // Media noche si ambos puntos antes de 01:30 y hay zona roja
+  // Regla 2: Noche completa si tiempo en zona roja ≥ 150 min
+  if (tiempoZonaRoja >= 150) {
+    return { tipo: 'Completa', icono: '🌙' };
+  }
+
+  // Regla 3: Media noche si ambos puntos antes de 01:30
   if (inicioD <= 90 && finD <= 90 && inicio < fin && tiempoZonaRoja > 0) {
     return { tipo: 'Media', icono: '✅' };
   }
 
-  // Media noche si comienza después de 01:30 dentro de zona roja
+  // Regla 4: Media noche si comienza después de 01:30 dentro de zona roja
   if (inicioD > 90 && inicioD < 330 && tiempoZonaRoja > 0) {
     return { tipo: 'Media', icono: '✅' };
   }
