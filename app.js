@@ -30,9 +30,11 @@ function determinarClasificacion(inicio, fin) {
     return { tipo: 'Media', icono: '✅' };
   }
 
- // Caso 3: Media noche si toca zona roja (sin importar hora de inicio)
-if (tiempoZonaRoja > 0) {
+// Caso 3: Media noche si comienza después de 01:30 dentro de zona roja
+if (inicioD > 90 && inicioD < 330 && tiempoZonaRoja > 0) {
   return { tipo: 'Media', icono: '✅' };
+}
+{ tipo: 'Media', icono: '✅' };
 }
 
   return { tipo: '—', icono: '☀️' };
