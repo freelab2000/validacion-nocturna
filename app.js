@@ -18,12 +18,18 @@ function calcularTiempoZonaRoja(inicio, fin) {
 function esMediaNoche(inicio, fin) {
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
+  const abarcaZonaRoja = calcularTiempoZonaRoja(inicio, fin) > 0;
 
-  return (
-    (inicioD <= 90 && finD <= 90) || // Caso 1: ambos antes de 01:30
-    (inicioD <= 90 && finD > 90 && inicio < fin) || // Caso 2: empieza antes y termina después
-    (inicioD > 90 && inicio < fin && inicioD <= 330) // Caso 3: comienza después de 01:30 dentro de zona roja
-  );
+  // Caso 1: termina antes de 01:30 y abarca zona roja
+  if (finD <= 90 && abarcaZonaRoja) return true;
+
+  // Caso 2: comienza antes y termina después de 01:30, abarcando zona roja
+  if (inicioD <= 90 && finD > 90 && abarcaZonaRoja) return true;
+
+  // Caso 3: comienza después de 01:30 pero dentro de zona roja
+  if (inicioD > 90 && inicioD < 330 && abarcaZonaRoja) return true;
+
+  return false;
 }
 
 function determinarClasificacion(inicio, fin) {
@@ -31,15 +37,15 @@ function determinarClasificacion(inicio, fin) {
   const mediaNoche = esMediaNoche(inicio, fin);
 
   if (tiempoZonaRoja >= 150 && mediaNoche) {
-    return { tipo: 'Completa', icono: '🌙', media: true };
-  }
-  if (tiempoZonaRoja >= 150 || mediaNoche) {
-    return { tipo: 'Parcial', icono: '🌍', media: mediaNoche };
+    return { tipo: 'Completa', icono: '🌙' };
   }
   if (mediaNoche) {
-    return { tipo: 'Media', icono: '✅', media: true };
+    return { tipo: 'Media', icono: '✅' };
   }
-  return { tipo: '—', icono: '☀️', media: false };
+  if (tiempoZonaRoja >= 150) {
+    return { tipo: 'Parcial', icono: '🌍' };
+  }
+  return { tipo: '—', icono: '☀️' };
 }
 
 function minutosADisplay(min) {
@@ -56,9 +62,7 @@ function mostrarResultado(index, inicio, fin) {
   const clasif = determinarClasificacion(inicio, fin);
 
   let fondo = "#e0e0e0";
-  if (clasif.tipo === 'Completa' || clasif.tipo === 'Parcial' || clasif.tipo === 'Media') {
-    fondo = "#d7f8d0";
-  }
+  if (clasif.tipo !== '—') fondo = "#d7f8d0";
 
   let contenido = `
     <strong>PSV ${index}</strong>
@@ -67,7 +71,6 @@ function mostrarResultado(index, inicio, fin) {
       <li><span>▸ Término:</span> ${minutosADisplay(fin)}</li>
       <li><span>▸ Tiempo en zona roja:</span> ${tiempoZona} min</li>`;
 
-  // Mostrar solo el resultado más relevante
   if (clasif.tipo === 'Completa') {
     contenido += `<li><span>▸ Noche:</span> Completa ${clasif.icono}</li>`;
   } else if (clasif.tipo === 'Parcial') {
@@ -114,9 +117,7 @@ function validarProgramacion() {
 
     if (esNoche) {
       nochesConsecutivas++;
-      if (nochesConsecutivas > maxConsecutivas) {
-        maxConsecutivas = nochesConsecutivas;
-      }
+      maxConsecutivas = Math.max(maxConsecutivas, nochesConsecutivas);
     } else {
       nochesConsecutivas = 0;
     }
@@ -137,9 +138,3 @@ function validarProgramacion() {
   mensaje.style.borderRadius = "8px";
   resultado.appendChild(mensaje);
 }
-
-// ✅ Asocia la validación al envío del formulario
-document.getElementById("nightForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  validarProgramacion();
-});
