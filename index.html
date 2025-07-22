@@ -197,7 +197,12 @@
       loadSelect(`end${i}_mm`, 0, 59);
     }
   </script>
-
+<script>
+  document.getElementById("nightForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    validarProgramacion();
+  });
+</script>
   <script src="app.js"></script>
 </body>
 </html>
