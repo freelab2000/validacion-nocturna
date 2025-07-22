@@ -1,12 +1,12 @@
 function calcularTiempoZonaRoja(inicio, fin) {
-  const zonaRojaInicio = 30;   // 00:30
-  const zonaRojaFin = 330;     // 05:30
+  const zonaRojaInicio = 30;  // 00:30
+  const zonaRojaFin = 330;    // 05:30
   let tiempoZonaRoja = 0;
 
-  if (fin < inicio) fin += 1440; // Ajuste si termina al día siguiente
+  if (fin < inicio) fin += 1440;
 
   for (let t = inicio; t < fin; t++) {
-    let minutoDelDia = t % 1440;
+    const minutoDelDia = t % 1440;
     if (minutoDelDia >= zonaRojaInicio && minutoDelDia < zonaRojaFin) {
       tiempoZonaRoja++;
     }
@@ -15,44 +15,27 @@ function calcularTiempoZonaRoja(inicio, fin) {
   return tiempoZonaRoja;
 }
 
-function esMediaNoche(inicio, fin, tiempoZonaRoja) {
-  if (tiempoZonaRoja === 0) return false;
-
-  const inicioD = inicio % 1440;
-  const finD = fin % 1440;
-
-  return (
-    (inicioD <= 90 && finD <= 90 && inicio < fin) || // Ambos antes de 01:30
-    (inicioD > 90 && inicioD < 330)                  // Comienza después de 01:30 dentro de zona roja
-  );
-}
-
-function esNocheCompleta(inicio, fin, tiempoZonaRoja) {
-  if (tiempoZonaRoja === 0) return false;
-
-  const inicioD = inicio % 1440;
-  const finD = fin % 1440;
-
-  return (
-    (inicioD <= 90 && finD > 90 && inicio < fin) || // Cruza 01:30 desde antes
-    (tiempoZonaRoja >= 150)                         // Al menos 2h30m en zona roja
-  );
-}
-
 function determinarClasificacion(inicio, fin) {
   const tiempoZonaRoja = calcularTiempoZonaRoja(inicio, fin);
+  const inicioD = inicio % 1440;
+  const finD = fin % 1440;
 
-  const completa = esNocheCompleta(inicio, fin, tiempoZonaRoja);
-  if (completa) {
-    return { tipo: 'Completa', icono: '🌙', media: false };
+  // Caso 1: Noche completa si inicia antes de 01:30 y termina después de 01:30
+  if (inicioD <= 90 && finD > 90 && inicio < fin) {
+    return { tipo: 'Completa', icono: '🌙' };
   }
 
-  const media = esMediaNoche(inicio, fin, tiempoZonaRoja);
-  if (media) {
-    return { tipo: 'Media', icono: '✅', media: true };
+  // Caso 2: Media noche si ambos puntos antes de 01:30
+  if (inicioD <= 90 && finD <= 90 && inicio < fin && tiempoZonaRoja > 0) {
+    return { tipo: 'Media', icono: '✅' };
   }
 
-  return { tipo: '—', icono: '☀️', media: false };
+  // Caso 3: Media noche si comienza después de 01:30 dentro de zona roja
+  if (inicioD > 90 && inicioD < 330 && tiempoZonaRoja > 0) {
+    return { tipo: 'Media', icono: '✅' };
+  }
+
+  return { tipo: '—', icono: '☀️' };
 }
 
 function minutosADisplay(min) {
@@ -69,9 +52,7 @@ function mostrarResultado(index, inicio, fin) {
   const clasif = determinarClasificacion(inicio, fin);
 
   let fondo = "#e0e0e0";
-  if (clasif.tipo !== '—') {
-    fondo = "#d7f8d0";
-  }
+  if (clasif.tipo !== '—') fondo = "#d7f8d0";
 
   let contenido = `
     <strong>PSV ${index}</strong>
@@ -80,11 +61,10 @@ function mostrarResultado(index, inicio, fin) {
       <li><span>▸ Término:</span> ${minutosADisplay(fin)}</li>
       <li><span>▸ Tiempo en zona roja:</span> ${tiempoZona} min</li>`;
 
-  // Mostrar clasificación simplificada
   if (clasif.tipo === 'Completa') {
     contenido += `<li><span>▸ Noche:</span> Completa ${clasif.icono}</li>`;
   } else if (clasif.tipo === 'Media') {
-    contenido += `<li><span>▸ Media noche:</span> ✅</li>`;
+    contenido += `<li><span>▸ Media noche:</span> ${clasif.icono}</li>`;
   } else {
     contenido += `<li><span>▸ Noche:</span> — ${clasif.icono}</li>`;
   }
@@ -125,9 +105,7 @@ function validarProgramacion() {
 
     if (esNoche) {
       nochesConsecutivas++;
-      if (nochesConsecutivas > maxConsecutivas) {
-        maxConsecutivas = nochesConsecutivas;
-      }
+      maxConsecutivas = Math.max(maxConsecutivas, nochesConsecutivas);
     } else {
       nochesConsecutivas = 0;
     }
