@@ -15,70 +15,92 @@ function calcularTiempoZonaRoja(inicio, fin) {
   return tiempoZonaRoja;
 }
 
-function determinarClasificacion(inicio, fin, tiempoZonaRoja) {
-  const incluyeZonaRoja = tiempoZonaRoja > 0;
-
-  // Reglas de media noche según convenio:
-  const esMediaNoche = (inicio < 90 || fin <= 90 || inicio >= 90); // siempre aplica si toca el umbral
-  const cruza130 = inicio < 90 && fin > 90; // noche completa si atraviesa la 01:30
-
-  if (incluyeZonaRoja && cruza130) {
-    return { tipo: 'Completa', icono: '🌙', esNoche: true, mediaNoche: true };
-  } else if (incluyeZonaRoja && esMediaNoche) {
-    return { tipo: 'Parcial', icono: '🌗', esNoche: true, mediaNoche: true };
-  }
-
-  return { tipo: '—', icono: '☀️', esNoche: false, mediaNoche: false };
+function esMediaNoche(inicio, fin) {
+  const inicioD = inicio % 1440;
+  const finD = fin % 1440;
+  return (
+    (inicioD <= 90 && finD <= 90) || // Caso 1: ambos antes de 01:30
+    (inicioD <= 90 && finD > 90 && inicio < fin) || // Caso 2: empieza antes y termina después
+    (inicioD > 90 && inicio < fin && inicioD <= 330) // Caso 3: comienza después de 01:30 dentro de zona roja
+  );
 }
 
-function minutosADisplay(minutos) {
-  const h = Math.floor(minutos / 60).toString().padStart(2, '0');
-  const m = (minutos % 60).toString().padStart(2, '0');
+function determinarClasificacion(inicio, fin) {
+  const tiempoZonaRoja = calcularTiempoZonaRoja(inicio, fin);
+  const mediaNoche = esMediaNoche(inicio, fin);
+
+  if (tiempoZonaRoja >= 150 && mediaNoche) {
+    return { tipo: 'Completa', icono: '🌙', media: true };
+  }
+  if (tiempoZonaRoja >= 150 || mediaNoche) {
+    return { tipo: 'Parcial', icono: '🌍', media: mediaNoche };
+  }
+  if (mediaNoche) {
+    return { tipo: 'Media', icono: '✅', media: true };
+  }
+  return { tipo: '—', icono: '☀️', media: false };
+}
+
+function minutosADisplay(min) {
+  const h = Math.floor(min / 60).toString().padStart(2, '0');
+  const m = (min % 60).toString().padStart(2, '0');
   return `${h}:${m}`;
 }
 
-function obtenerMinutos(id_hh, id_mm) {
-  const hh = parseInt(document.getElementById(id_hh).value);
-  const mm = parseInt(document.getElementById(id_mm).value);
-  return hh * 60 + mm;
-}
-
-function mostrarResultado(index, inicioMin, finMin) {
+function mostrarResultado(index, inicio, fin) {
   const div = document.createElement("div");
-  div.classList.add("result");
+  div.classList.add("resultado");
 
-  const tiempoZR = calcularTiempoZonaRoja(inicioMin, finMin);
-  const clasificacion = determinarClasificacion(inicioMin, finMin, tiempoZR);
+  const tiempoZona = calcularTiempoZonaRoja(inicio, fin);
+  const clasif = determinarClasificacion(inicio, fin);
 
-  div.innerHTML = `
+  let fondo = "#e0e0e0";
+  if (clasif.tipo === 'Completa' || clasif.tipo === 'Parcial' || clasif.tipo === 'Media') {
+    fondo = "#d7f8d0";
+  }
+
+  let contenido = `
     <strong>PSV ${index}</strong>
     <ul>
-      <li><span>▸ Inicio:</span> ${minutosADisplay(inicioMin)}</li>
-      <li><span>▸ Término:</span> ${minutosADisplay(finMin)}</li>
-      <li><span>▸ Tiempo en zona roja:</span> ${tiempoZR} min</li>
-      <li><span>▸ Media noche:</span> ${clasificacion.mediaNoche ? '✅' : '❌'}</li>
-      <li><span>▸ Noche:</span> ${clasificacion.tipo} ${clasificacion.icono}</li>
-    </ul>
-  `;
+      <li><span>▸ Inicio:</span> ${minutosADisplay(inicio)}</li>
+      <li><span>▸ Término:</span> ${minutosADisplay(fin)}</li>
+      <li><span>▸ Tiempo en zona roja:</span> ${tiempoZona} min</li>`;
 
-  div.style.backgroundColor = clasificacion.tipo === '—' ? "#e0e0e0" : "#d7f8d0";
+  // Mostrar solo el resultado más relevante
+  if (clasif.tipo === 'Completa') {
+    contenido += `<li><span>▸ Noche:</span> Completa ${clasif.icono}</li>`;
+  } else if (clasif.tipo === 'Parcial') {
+    contenido += `<li><span>▸ Noche:</span> Parcial ${clasif.icono}</li>`;
+  } else if (clasif.tipo === 'Media') {
+    contenido += `<li><span>▸ Media noche:</span> ✅</li>`;
+  } else {
+    contenido += `<li><span>▸ Noche:</span> — ${clasif.icono}</li>`;
+  }
 
-  return { div, esNoche: clasificacion.esNoche };
+  contenido += `</ul>`;
+  div.innerHTML = contenido;
+  div.style.backgroundColor = fondo;
+
+  return { div, esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Parcial' };
 }
 
-document.getElementById("nightForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const resultado = document.getElementById("resultado");
+function validarProgramacion() {
   const detalle = document.getElementById("detalle");
-  resultado.innerHTML = "";
+  const resultado = document.getElementById("resultado");
   detalle.innerHTML = "";
+  resultado.innerHTML = "";
 
   const psvs = [];
 
   for (let i = 1; i <= 3; i++) {
-    const inicio = obtenerMinutos(`start${i}_hh`, `start${i}_mm`);
-    const fin = obtenerMinutos(`end${i}_hh`, `end${i}_mm`);
+    const hIni = parseInt(document.getElementById(`start${i}_hh`).value);
+    const mIni = parseInt(document.getElementById(`start${i}_mm`).value);
+    const hFin = parseInt(document.getElementById(`end${i}_hh`).value);
+    const mFin = parseInt(document.getElementById(`end${i}_mm`).value);
+
+    const inicio = hIni * 60 + mIni;
+    const fin = hFin * 60 + mFin;
+
     psvs.push({ inicio, fin });
   }
 
@@ -99,14 +121,18 @@ document.getElementById("nightForm").addEventListener("submit", function (e) {
     }
   });
 
-  const validacion = document.createElement("div");
+  const mensaje = document.createElement("div");
   if (maxConsecutivas <= 2) {
-    validacion.classList.add("valid");
-    validacion.innerHTML = `✅ Programación válida: ${maxConsecutivas} noche(s) consecutiva(s)`;
+    mensaje.textContent = `✅ Programación válida: ${maxConsecutivas} noche(s) consecutiva(s)`;
+    mensaje.style.backgroundColor = "#d4fcd4";
+    mensaje.style.color = "#006400";
   } else {
-    validacion.classList.add("invalid");
-    validacion.innerHTML = `❌ Programación inválida: ${maxConsecutivas} noches consecutivas (máx. 2 permitidas)`;
+    mensaje.textContent = `❌ Programación inválida: ${maxConsecutivas} noches consecutivas (máx. 2 permitidas)`;
+    mensaje.style.backgroundColor = "#fcdada";
+    mensaje.style.color = "#8b0000";
   }
-
-  resultado.appendChild(validacion);
-});
+  mensaje.style.padding = "10px";
+  mensaje.style.fontWeight = "600";
+  mensaje.style.borderRadius = "8px";
+  resultado.appendChild(mensaje);
+}
