@@ -20,19 +20,18 @@ function determinarClasificacion(inicio, fin) {
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
 
-  const esCompleta =
-    ((inicioD >= 0 && inicioD < 30) && finD > 90) ||
-    ((inicioD >= 30 && inicioD <= 90) && finD > 90);
+  const estaEnZonaRoja = tiempoZonaRoja > 0;
+  const comienzaEnZonaRoja = inicioD >= 30 && inicioD <= 90;
+  const terminaDespuesDe0130 = finD > 90;
+  const comienzaDespuesDe0130 = inicioD > 90 && inicioD < 330;
 
-  const esMedia =
-    (inicioD > 90 && inicioD < 330 && tiempoZonaRoja > 0) || // después de 01:30 pero aún dentro de zona roja
-    ((inicioD < 30) && finD <= 90 && tiempoZonaRoja > 0);     // comenzó antes zona roja y terminó antes 01:30
-
-  if (esCompleta) {
+  // Regla oficial: Noche completa
+  if (comienzaEnZonaRoja && terminaDespuesDe0130) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  if (esMedia) {
+  // Regla oficial: Media noche
+  if ((inicioD < 30 && finD <= 90 && estaEnZonaRoja) || (comienzaDespuesDe0130 && estaEnZonaRoja)) {
     return { tipo: 'Media', icono: '✅' };
   }
 
