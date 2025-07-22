@@ -15,27 +15,33 @@ function calcularTiempoZonaRoja(inicio, fin) {
   return tiempoZonaRoja;
 }
 
-function determinarClasificacion(inicio, fin) {
-  const tiempoZonaRoja = calcularTiempoZonaRoja(inicio, fin);
+function esMediaNoche(inicio, fin, tiempoZonaRoja) {
+  if (tiempoZonaRoja === 0) return false;
+
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
 
-  const esMediaNoche =
-    (inicioD > 90) ||                             // Comienza después de 01:30
-    (inicioD <= 90 && finD <= 90);                // Comienza y termina antes de 01:30
+  return (
+    (inicioD > 90) ||  // Caso 1: comienza después de 01:30 (media noche)
+    (inicioD <= 90 && finD <= 90 && inicio < fin) || // Caso 2: ambos antes de 01:30
+    (inicioD <= 90 && finD > 90 && inicio < fin)     // Caso 3: antes y después de 01:30 (noche completa)
+  );
+}
 
-  const esNocheCompleta = (inicioD <= 90 && finD > 90); // Comienza antes y termina después de 01:30
+function determinarClasificacion(inicio, fin) {
+  const tiempoZonaRoja = calcularTiempoZonaRoja(inicio, fin);
+  const mediaNoche = esMediaNoche(inicio, fin, tiempoZonaRoja);
 
-  if (esNocheCompleta) {
-    return { tipo: 'Completa', icono: '🌙' };
+  if (tiempoZonaRoja >= 150 && mediaNoche) {
+    return { tipo: 'Completa', icono: '🌙', media: true };
   }
-  if (esMediaNoche) {
-    return { tipo: 'Media', icono: '✅' };
+  if (tiempoZonaRoja >= 150 || (mediaNoche && tiempoZonaRoja > 0)) {
+    return { tipo: 'Parcial', icono: '🌍', media: mediaNoche };
   }
-  if (tiempoZonaRoja >= 150) {
-    return { tipo: 'Parcial', icono: '🌍' };
+  if (mediaNoche) {
+    return { tipo: 'Media', icono: '✅', media: true };
   }
-  return { tipo: '—', icono: '☀️' };
+  return { tipo: '—', icono: '☀️', media: false };
 }
 
 function minutosADisplay(min) {
@@ -52,7 +58,9 @@ function mostrarResultado(index, inicio, fin) {
   const clasif = determinarClasificacion(inicio, fin);
 
   let fondo = "#e0e0e0";
-  if (clasif.tipo !== '—') fondo = "#d7f8d0";
+  if (clasif.tipo !== '—') {
+    fondo = "#d7f8d0";
+  }
 
   let contenido = `
     <strong>PSV ${index}</strong>
@@ -61,12 +69,13 @@ function mostrarResultado(index, inicio, fin) {
       <li><span>▸ Término:</span> ${minutosADisplay(fin)}</li>
       <li><span>▸ Tiempo en zona roja:</span> ${tiempoZona} min</li>`;
 
+  // Mostrar solo el resultado más relevante
   if (clasif.tipo === 'Completa') {
     contenido += `<li><span>▸ Noche:</span> Completa ${clasif.icono}</li>`;
-  } else if (clasif.tipo === 'Media') {
-    contenido += `<li><span>▸ Media noche:</span> ${clasif.icono}</li>`;
   } else if (clasif.tipo === 'Parcial') {
     contenido += `<li><span>▸ Noche:</span> Parcial ${clasif.icono}</li>`;
+  } else if (clasif.tipo === 'Media') {
+    contenido += `<li><span>▸ Media noche:</span> ✅</li>`;
   } else {
     contenido += `<li><span>▸ Noche:</span> — ${clasif.icono}</li>`;
   }
@@ -75,7 +84,7 @@ function mostrarResultado(index, inicio, fin) {
   div.innerHTML = contenido;
   div.style.backgroundColor = fondo;
 
-  return { div, esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Media' || clasif.tipo === 'Parcial' };
+  return { div, esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Parcial' };
 }
 
 function validarProgramacion() {
@@ -130,9 +139,3 @@ function validarProgramacion() {
   mensaje.style.borderRadius = "8px";
   resultado.appendChild(mensaje);
 }
-
-// Asociar el botón con la función
-document.getElementById("nightForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  validarProgramacion();
-});
