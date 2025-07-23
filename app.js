@@ -72,7 +72,7 @@ function mostrarResultado(index, inicio, fin) {
   } else if (clasif.tipo === 'Media') {
     contenido += `<li><span>▸ Media noche:</span> ${clasif.icono}</li>`;
   } else {
-    contenido += `<li><span>▸ Noche:</span> — ${clasif.icono}</li>`;
+    contenido += `<li><span>▸ Noche:</span> Diurno (sin zona roja) ${clasif.icono}</li>`;
   }
 
   contenido += `</ul>`;
