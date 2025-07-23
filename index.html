@@ -69,6 +69,7 @@
       background-color: #fff;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
       text-align: center;
+      margin: 0 4px;
     }
 
     .dual-select {
@@ -97,6 +98,25 @@
       transform: scale(1.01);
     }
 
+    .result {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .valid { background-color: #d9fdd3; color: #155724; }
+    .invalid { background-color: #f8d7da; color: #721c24; }
+
+    /* Contenedor del gráfico de zona roja */
+    .zona-visual {
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    .zona-visual div {
+      height: 30px;
+    }
+
     .info-box {
       margin-top: 40px;
       background-color: #eaf3fb;
@@ -112,16 +132,6 @@
       font-weight: 700;
     }
 
-    .result {
-      margin-top: 25px;
-      padding: 15px;
-      border-radius: 8px;
-      font-weight: 600;
-    }
-
-    .valid { background-color: #d9fdd3; color: #155724; }
-    .invalid { background-color: #f8d7da; color: #721c24; }
-
     footer {
       margin-top: 40px;
       text-align: center;
@@ -136,6 +146,7 @@
   <h1>Validación Nocturna PSV</h1>
 
   <form id="nightForm">
+    <!-- PSV 1 -->
     <div class="psv-box">
       <h2>PSV 1</h2>
       <div class="field">
@@ -154,6 +165,7 @@
       </div>
     </div>
 
+    <!-- PSV 2 -->
     <div class="psv-box">
       <h2>PSV 2</h2>
       <div class="field">
@@ -172,6 +184,7 @@
       </div>
     </div>
 
+    <!-- PSV 3 -->
     <div class="psv-box">
       <h2>PSV 3</h2>
       <div class="field">
@@ -193,9 +206,14 @@
     <button type="submit">🧮 Validar programación</button>
   </form>
 
+  <!-- Resultados -->
   <div id="resultado" class="result"></div>
   <div id="detalle" style="margin-top: 20px; font-size: 15px;"></div>
 
+  <!-- Gráfico zona roja -->
+  <div id="zonaVisual" class="zona-visual"></div>
+
+  <!-- Info adicional -->
   <div class="info-box">
     <strong>ℹ️ Importante:</strong>
     Según el convenio colectivo, <strong>jornada nocturna</strong> es aquella que incluye un PSV dentro del período denominado <strong>zona roja</strong>, comprendido entre las <strong>00:30</strong> y las <strong>05:30</strong> L.T del lugar de operación.
@@ -206,6 +224,7 @@
   </footer>
 
   <script>
+    // Carga de selects
     const loadSelect = (id, start, end) => {
       const sel = document.getElementById(id);
       for (let i = start; i <= end; i++) {
@@ -215,7 +234,6 @@
         sel.appendChild(opt);
       }
     };
-
     for (let i = 1; i <= 3; i++) {
       loadSelect(`start${i}_hh`, 0, 23);
       loadSelect(`start${i}_mm`, 0, 59);
