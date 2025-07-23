@@ -30,10 +30,14 @@ function determinarClasificacion(inicio, fin) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // Regla oficial: Media noche
-  if ((inicioD < 30 && finD <= 90 && estaEnZonaRoja) || (comienzaDespuesDe0130 && estaEnZonaRoja)) {
-    return { tipo: 'Media', icono: '✅' };
-  }
+// Regla oficial: Media noche
+if (
+  (inicioD < 30 && finD <= 90 && estaEnZonaRoja) || // comienza antes de zona roja y termina antes de 01:30
+  (comienzaDespuesDe0130 && estaEnZonaRoja) ||      // comienza después de 01:30 dentro de zona roja
+  (inicioD >= 0 && inicioD < 30 && finD > 30 && finD <= 90) // comienza justo antes de zona roja y termina dentro de ella antes de 01:30
+) {
+  return { tipo: 'Media', icono: '✅' };
+}
 
   return { tipo: '—', icono: '☀️' };
 }
