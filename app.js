@@ -20,25 +20,24 @@ function determinarClasificacion(inicio, fin) {
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
 
-  // ✅ Si el PSV abarca toda la zona roja (≥300 min), forzar como Noche completa
+  // ✅ Noche completa si abarca la zona roja completa
   if (tiempoZonaRoja >= 300) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // ✅ Nueva condición: inicia antes de 01:30 (día anterior incluido) y termina después de 01:30, con zona roja
-  if (inicio < 90 && finD > 90 && tiempoZonaRoja > 0) {
+  // ✅ Noche completa si comienza antes o igual a 01:30 (día previo incluido) y termina después de 01:30
+  if (inicioD <= 90 && finD > 90 && tiempoZonaRoja > 0) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
+  // ✅ Media noche si tiene zona roja y termina antes o igual a 01:30 o comienza después de 01:30
   if (tiempoZonaRoja > 0) {
-    if (inicioD <= 90 && finD > 90) {
-      return { tipo: 'Completa', icono: '🌙' };
-    }
     if (finD <= 90 || inicioD > 90) {
       return { tipo: 'Media', icono: '✅' };
     }
   }
 
+  // ☀️ Día
   return { tipo: '—', icono: '☀️' };
 }
 
