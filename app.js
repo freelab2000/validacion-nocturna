@@ -3,7 +3,7 @@ function calcularTiempoZonaRoja(inicio, fin) {
   const zonaRojaFin = 330;    // 05:30
   let tiempoZonaRoja = 0;
 
-  if (fin < inicio) fin += 1440;
+  if (fin < inicio) fin += 1440; // cruza medianoche
 
   for (let t = inicio; t < fin; t++) {
     const minutoDelDia = t % 1440;
@@ -20,24 +20,16 @@ function determinarClasificacion(inicio, fin) {
   const inicioD = inicio % 1440;
   const finD = fin % 1440;
 
-  const estaEnZonaRoja = tiempoZonaRoja > 0;
-  const comienzaEnZonaRoja = inicioD >= 30 && inicioD <= 90;
-  const terminaDespuesDe0130 = finD > 90;
-  const comienzaDespuesDe0130 = inicioD > 90 && inicioD < 330;
-
-  // Regla oficial: Noche completa
-  if (comienzaEnZonaRoja && terminaDespuesDe0130) {
-    return { tipo: 'Completa', icono: '🌙' };
+  if (tiempoZonaRoja > 0) {
+    // Noche completa: empieza antes o durante zona roja y termina después de 01:30
+    if (inicioD <= 90 && finD > 90) {
+      return { tipo: 'Completa', icono: '🌙' };
+    }
+    // Media noche: termina antes o igual a 01:30, o empieza después de 01:30 dentro de zona roja
+    if (finD <= 90 || (inicioD > 90 && inicioD < 330)) {
+      return { tipo: 'Media', icono: '✅' };
+    }
   }
-
-// Regla oficial: Media noche
-if (
-  (inicioD < 30 && finD <= 90 && estaEnZonaRoja) || // comienza antes de zona roja y termina antes de 01:30
-  (comienzaDespuesDe0130 && estaEnZonaRoja) ||      // comienza después de 01:30 dentro de zona roja
-  (inicioD >= 0 && inicioD < 30 && finD > 30 && finD <= 90) // comienza justo antes de zona roja y termina dentro de ella antes de 01:30
-) {
-  return { tipo: 'Media', icono: '✅' };
-}
 
   return { tipo: '—', icono: '☀️' };
 }
