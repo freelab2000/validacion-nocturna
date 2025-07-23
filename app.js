@@ -1,6 +1,6 @@
 function calcularTiempoZonaRoja(inicio, fin) {
   const zonaRojaInicio = 30;  // 00:30
-  const zonaRojaFin = 330;    // 05:30
+  const zonaRojaFin = 330;   // 05:30
   let tiempoZonaRoja = 0;
 
   if (fin < inicio) fin += 1440; // cruza medianoche
@@ -21,10 +21,10 @@ function determinarClasificacion(inicio, fin) {
   const finD = fin % 1440;
 
   if (tiempoZonaRoja > 0) {
-    if ((inicioD <= 90 && finD > 90) || (inicioD > finD && finD > 90)) {
+    if (inicioD <= 90 && finD > 90) {
       return { tipo: 'Completa', icono: '🌙' };
     }
-    if (finD <= 90 || (inicioD > 90 && inicioD < 330)) {
+    if (finD <= 90 || inicioD > 90) {
       return { tipo: 'Media', icono: '✅' };
     }
   }
