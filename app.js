@@ -21,11 +21,9 @@ function determinarClasificacion(inicio, fin) {
   const finD = fin % 1440;
 
   if (tiempoZonaRoja > 0) {
-    // Noche completa: empieza antes o durante zona roja y termina después de 01:30
     if (inicioD <= 90 && finD > 90) {
       return { tipo: 'Completa', icono: '🌙' };
     }
-    // Media noche: termina antes o igual a 01:30, o empieza después de 01:30 dentro de zona roja
     if (finD <= 90 || (inicioD > 90 && inicioD < 330)) {
       return { tipo: 'Media', icono: '✅' };
     }
@@ -69,7 +67,8 @@ function mostrarResultado(index, inicio, fin) {
   div.innerHTML = contenido;
   div.style.backgroundColor = fondo;
 
-  return { div, esNoche: clasif.tipo === 'Completa' };
+  // ✅ Esta línea ahora considera también Media noche como “noche válida”
+  return { div, esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Media' };
 }
 
 function validarProgramacion() {
