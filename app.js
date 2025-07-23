@@ -31,7 +31,7 @@ function determinarClasificacion(inicio, fin) {
     }
   }
 
-  return { tipo: '—', icono: '☀️' };
+  return { tipo: 'NO', icono: '☀️' };
 }
 
 function minutosADisplay(min) {
