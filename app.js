@@ -21,8 +21,7 @@ function determinarClasificacion(inicio, fin) {
   const finD = fin % 1440;
 
   if (tiempoZonaRoja > 0) {
-    const cruzo0130 = (inicioD <= 90) || (inicio > 1440 && (inicio % 1440) > 840);
-    if (cruzo0130 && finD > 90) {
+    if ((inicioD <= 90 && finD > 90) || (inicioD > finD && finD > 90)) {
       return { tipo: 'Completa', icono: '🌙' };
     }
     if (finD <= 90 || (inicioD > 90 && inicioD < 330)) {
