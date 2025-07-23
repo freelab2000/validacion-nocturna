@@ -38,14 +38,8 @@
       color: #003366;
       margin-bottom: 15px;
     }
-    .field-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
     .field {
-      flex: 1;
-      min-width: 130px;
+      margin-bottom: 15px;
     }
     label {
       display: block;
@@ -110,60 +104,54 @@
   <form id="nightForm">
     <div class="psv-box">
       <h2>PSV 1</h2>
-      <div class="field-row">
-        <div class="field">
-          <label>Inicio (L.T):</label>
-          <div class="dual-select">
-            <select id="start1_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="start1_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
-          </div>
+      <div class="field">
+        <label>Inicio (L.T):</label>
+        <div class="dual-select">
+          <select id="start1_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
+          <select id="start1_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
         </div>
-        <div class="field">
-          <label>Término (L.T):</label>
-          <div class="dual-select">
-            <select id="end1_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="end1_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
-          </div>
+      </div>
+      <div class="field">
+        <label>Término (L.T):</label>
+        <div class="dual-select">
+          <select id="end1_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
+          <select id="end1_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
         </div>
       </div>
     </div>
 
     <div class="psv-box">
       <h2>PSV 2</h2>
-      <div class="field-row">
-        <div class="field">
-          <label>Inicio (L.T):</label>
-          <div class="dual-select">
-            <select id="start2_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="start2_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
-          </div>
+      <div class="field">
+        <label>Inicio (L.T):</label>
+        <div class="dual-select">
+          <select id="start2_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
+          <select id="start2_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
         </div>
-        <div class="field">
-          <label>Término (L.T):</label>
-          <div class="dual-select">
-            <select id="end2_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="end2_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
-          </div>
+      </div>
+      <div class="field">
+        <label>Término (L.T):</label>
+        <div class="dual-select">
+          <select id="end2_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
+          <select id="end2_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
         </div>
       </div>
     </div>
 
     <div class="psv-box">
       <h2>PSV 3</h2>
-      <div class="field-row">
-        <div class="field">
-          <label>Inicio (L.T):</label>
-          <div class="dual-select">
-            <select id="start3_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="start3_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
-          </div>
+      <div class="field">
+        <label>Inicio (L.T):</label>
+        <div class="dual-select">
+          <select id="start3_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
+          <select id="start3_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
         </div>
-        <div class="field">
-          <label>Término (L.T):</label>
-          <div class="dual-select">
-            <select id="end3_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
-            <select id="end3_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
-          </div>
+      </div>
+      <div class="field">
+        <label>Término (L.T):</label>
+        <div class="dual-select">
+          <select id="end3_hh" required><option value="" disabled selected hidden>-- hh --</option></select>
+          <select id="end3_mm" required><option value="" disabled selected hidden>-- mm --</option></select>
         </div>
       </div>
     </div>
@@ -197,12 +185,12 @@
       loadSelect(`end${i}_mm`, 0, 59);
     }
   </script>
-<script>
-  document.getElementById("nightForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-    validarProgramacion();
-  });
-</script>
+  <script>
+    document.getElementById("nightForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      validarProgramacion();
+    });
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
