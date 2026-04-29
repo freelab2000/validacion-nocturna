@@ -24,25 +24,26 @@ function determinarClasificacion(inicio, fin) {
   const dentroZonaRoja = tiempoZonaRoja > 0;
 
   // 01:30 = minuto 90
-  // Regla corregida:
-  // - Antes de 01:30  => Media noche
-  // - Desde 01:30     => Noche completa
+  // Regla oficial aplicada:
+  // - Antes de 01:30: Media noche
+  // - Desde 01:30: Noche completa
   const terminaEnODepues0130 = finD >= 90;
-  const comienzaAntes0130IncluyendoDiaPrevio = (inicioD < 90 || inicio > fin);
+  const comienzaAntesOEn0130IncluyendoDiaPrevio = (inicioD <= 90 || inicio > fin);
 
   // Noche completa si abarca toda la zona roja: 00:30 a 05:30 = 300 min
   if (tiempoZonaRoja >= 300) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // Noche completa si tiene zona roja, termina a las 01:30 o después,
-  // y comenzó antes de 01:30 o cruzó medianoche
-  if (dentroZonaRoja && terminaEnODepues0130 && comienzaAntes0130IncluyendoDiaPrevio) {
+  // Noche completa si toca zona roja, termina a las 01:30 o después,
+  // y comenzó antes de las 01:30, a las 01:30 exactas, o cruzó medianoche
+  if (dentroZonaRoja && terminaEnODepues0130 && comienzaAntesOEn0130IncluyendoDiaPrevio) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // Media noche si tiene zona roja pero termina antes de 01:30
-  // o comienza después de 01:30
+  // Media noche si toca zona roja, pero:
+  // - termina antes de 01:30, o
+  // - comienza después de 01:30
   if (dentroZonaRoja) {
     if (finD < 90 || inicioD > 90) {
       return { tipo: 'Media', icono: '✅' };
