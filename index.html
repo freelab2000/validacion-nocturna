@@ -16,7 +16,6 @@
       --blue-dark: #003366;
       --blue-main: #004080;
       --blue-soft: #eaf3fb;
-      --bg: #f3f6fa;
       --card: #ffffff;
       --text: #14213d;
       --muted: #6b7280;
@@ -31,8 +30,7 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background:
-        radial-gradient(circle at top, #ffffff 0%, #f3f6fa 45%, #edf2f7 100%);
+      background: radial-gradient(circle at top, #ffffff 0%, #f3f6fa 45%, #edf2f7 100%);
       color: var(--text);
       padding: 18px;
       max-width: 860px;
@@ -81,27 +79,32 @@
     }
 
     .psv-box h2 {
-      font-size: 18px;
+      font-size: 20px;
       color: var(--blue-dark);
       margin: 0 0 14px;
       font-weight: 800;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      text-align: center;
       border-bottom: 1px solid var(--line);
       padding-bottom: 9px;
     }
 
     .time-row {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 42px;
-  align-items: end;
-  justify-content: start;
-}
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 52px;
+      align-items: end;
+      justify-content: center;
+    }
+
     .field {
       margin: 0;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     label {
@@ -114,15 +117,16 @@
     }
 
     .dual-select {
-  display: inline-grid;
-  grid-template-columns: 82px 82px;
-  gap: 8px;
-  width: auto;
-}
+      display: inline-grid;
+      grid-template-columns: 82px 82px;
+      gap: 8px;
+      width: auto;
+    }
 
-select {
-  width: 82px;
-  min-width: 82px;      padding: 10px 8px;
+    select {
+      width: 82px;
+      min-width: 82px;
+      padding: 10px 8px;
       font-size: 16px;
       font-weight: 600;
       border: 1px solid #b7c4d1;
@@ -235,10 +239,7 @@ select {
       }
 
       .psv-box h2 {
-        font-size: 17px;
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 6px;
+        font-size: 18px;
       }
 
       .time-row {
@@ -248,10 +249,16 @@ select {
 
       .dual-select {
         grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .field {
+        width: 100%;
       }
 
       select {
         width: 100%;
+        min-width: 0;
         font-size: 15px;
         padding: 9px 8px;
       }
