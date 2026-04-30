@@ -3,7 +3,7 @@ function calcularTiempoZonaRoja(inicio, fin) {
   const zonaRojaFin = 330;    // 05:30
   let tiempoZonaRoja = 0;
 
-  if (fin < inicio) fin += 1440; // Cruza medianoche
+  if (fin < inicio) fin += 1440;
 
   for (let t = inicio; t < fin; t++) {
     const minutoDelDia = t % 1440;
@@ -23,33 +23,29 @@ function determinarClasificacion(inicio, fin) {
 
   const dentroZonaRoja = tiempoZonaRoja > 0;
 
-  // DEFINICIÓN OFICIAL:
-  // - Noche completa solo si el PSV cruza 01:30 desde antes.
-  // - Si el PSV comienza después de 01:30, es media noche,
-  //   aunque permanezca varias horas dentro de zona roja.
   const terminaEnODepues0130 = finD >= 90;
   const comienzaAntesOEn0130IncluyendoDiaPrevio = (inicioD <= 90 || inicio > fin);
 
   if (tiempoZonaRoja >= 300) {
-    return { tipo: 'Completa', icono: '🌙' };
+    return { tipo: "Completa", icono: "🌙", texto: "Noche completa" };
   }
 
   if (dentroZonaRoja && terminaEnODepues0130 && comienzaAntesOEn0130IncluyendoDiaPrevio) {
-    return { tipo: 'Completa', icono: '🌙' };
+    return { tipo: "Completa", icono: "🌙", texto: "Noche completa" };
   }
 
   if (dentroZonaRoja) {
     if (finD < 90 || inicioD > 90) {
-      return { tipo: 'Media', icono: '✅' };
+      return { tipo: "Media", icono: "🌗", texto: "Media noche" };
     }
   }
 
-  return { tipo: '—', icono: '☀️' };
+  return { tipo: "—", icono: "☀️", texto: "Diurno" };
 }
 
 function minutosADisplay(min) {
-  const h = Math.floor((min % 1440) / 60).toString().padStart(2, '0');
-  const m = (min % 60).toString().padStart(2, '0');
+  const h = Math.floor((min % 1440) / 60).toString().padStart(2, "0");
+  const m = (min % 60).toString().padStart(2, "0");
   return `${h}:${m}`;
 }
 
@@ -60,32 +56,54 @@ function mostrarResultado(index, inicio, fin) {
   const tiempoZona = calcularTiempoZonaRoja(inicio, fin);
   const clasif = determinarClasificacion(inicio, fin);
 
-  let fondo = "#e0e0e0";
-  if (clasif.tipo !== '—') fondo = "#d7f8d0";
+  let fondo = "#e5e7eb";
+  let borde = "#9ca3af";
 
-  let contenido = `
-    <strong>PSV ${index}</strong>
-    <ul>
-      <li><span>▸ Inicio:</span> ${minutosADisplay(inicio)}</li>
-      <li><span>▸ Término:</span> ${minutosADisplay(fin)}</li>
-      <li><span>▸ Tiempo en zona roja:</span> ${tiempoZona} min</li>`;
-
-  if (clasif.tipo === 'Completa') {
-    contenido += `<li><span>▸ Noche:</span> Completa ${clasif.icono}</li>`;
-  } else if (clasif.tipo === 'Media') {
-    contenido += `<li><span>▸ Media noche:</span> ${clasif.icono}</li>`;
-  } else {
-    contenido += `<li><span>▸ Noche:</span> Diurno (sin zona roja) ${clasif.icono}</li>`;
+  if (clasif.tipo === "Completa") {
+    fondo = "#d8f7d2";
+    borde = "#2e7d32";
+  } else if (clasif.tipo === "Media") {
+    fondo = "#fff3cd";
+    borde = "#d99a00";
   }
 
-  contenido += `</ul>`;
-  div.innerHTML = contenido;
-  div.style.backgroundColor = fondo;
+  div.style.background = fondo;
+  div.style.borderLeft = `6px solid ${borde}`;
+  div.style.borderRadius = "16px";
+  div.style.padding = "14px 18px";
+  div.style.boxShadow = "0 6px 16px rgba(0, 30, 60, 0.08)";
+
+  div.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+      <strong style="font-size:17px; color:#003366;">PSV ${index}</strong>
+      <span style="font-weight:800; color:#14213d;">
+        ${clasif.icono} ${clasif.texto}
+      </span>
+    </div>
+
+    <div style="margin-top:8px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; color:#1f2937;">
+      <span>${minutosADisplay(inicio)} → ${minutosADisplay(fin)}</span>
+      <span>Zona roja: <strong>${tiempoZona} min</strong></span>
+    </div>
+  `;
 
   return {
     div,
-    esNoche: clasif.tipo === 'Completa' || clasif.tipo === 'Media'
+    esNoche: clasif.tipo === "Completa" || clasif.tipo === "Media",
+    simbolo: clasif.icono
   };
+}
+
+function crearMensaje(texto, fondo, color) {
+  const mensaje = document.createElement("div");
+  mensaje.textContent = texto;
+  mensaje.style.backgroundColor = fondo;
+  mensaje.style.color = color;
+  mensaje.style.padding = "14px 16px";
+  mensaje.style.fontWeight = "800";
+  mensaje.style.borderRadius = "14px";
+  mensaje.style.boxShadow = "0 6px 14px rgba(0, 30, 60, 0.10)";
+  return mensaje;
 }
 
 function validarProgramacion() {
@@ -107,31 +125,32 @@ function validarProgramacion() {
     const estaVacio = valores.every(v => v === "");
     const estaParcial = valores.some(v => v === "") && !estaVacio;
 
-    // Si el PSV está completamente vacío, se ignora
-    if (estaVacio) {
-      continue;
-    }
+    if (estaVacio) continue;
 
-    // Si el PSV está parcialmente lleno, se detiene y avisa
     if (estaParcial) {
-      const mensajeError = document.createElement("div");
-      mensajeError.textContent = `⚠️ El PSV ${i} está incompleto. Debes ingresar inicio y término completos.`;
-      mensajeError.style.backgroundColor = "#fff3cd";
-      mensajeError.style.color = "#856404";
-      mensajeError.style.padding = "10px";
-      mensajeError.style.fontWeight = "600";
-      mensajeError.style.borderRadius = "8px";
-      resultado.appendChild(mensajeError);
+      resultado.appendChild(
+        crearMensaje(
+          `⚠️ El PSV ${i} está incompleto. Debes ingresar inicio y término completos.`,
+          "#fff3cd",
+          "#856404"
+        )
+      );
       return;
     }
 
-    const hIni = parseInt(hIniValue);
-    const mIni = parseInt(mIniValue);
-    const hFin = parseInt(hFinValue);
-    const mFin = parseInt(mFinValue);
+    const inicio = parseInt(hIniValue) * 60 + parseInt(mIniValue);
+    const fin = parseInt(hFinValue) * 60 + parseInt(mFinValue);
 
-    const inicio = hIni * 60 + mIni;
-    const fin = hFin * 60 + mFin;
+    if (inicio === fin) {
+      resultado.appendChild(
+        crearMensaje(
+          `⚠️ El PSV ${i} tiene duración 0. Revisa inicio y término.`,
+          "#fff3cd",
+          "#856404"
+        )
+      );
+      return;
+    }
 
     psvs.push({
       numero: i,
@@ -141,23 +160,25 @@ function validarProgramacion() {
   }
 
   if (psvs.length === 0) {
-    const mensajeError = document.createElement("div");
-    mensajeError.textContent = "⚠️ Debes ingresar al menos un PSV.";
-    mensajeError.style.backgroundColor = "#fff3cd";
-    mensajeError.style.color = "#856404";
-    mensajeError.style.padding = "10px";
-    mensajeError.style.fontWeight = "600";
-    mensajeError.style.borderRadius = "8px";
-    resultado.appendChild(mensajeError);
+    resultado.appendChild(
+      crearMensaje(
+        "⚠️ Debes ingresar al menos un PSV.",
+        "#fff3cd",
+        "#856404"
+      )
+    );
     return;
   }
 
   let nochesConsecutivas = 0;
   let maxConsecutivas = 0;
+  const secuencia = [];
 
   psvs.forEach((psv) => {
-    const { div, esNoche } = mostrarResultado(psv.numero, psv.inicio, psv.fin);
+    const { div, esNoche, simbolo } = mostrarResultado(psv.numero, psv.inicio, psv.fin);
     detalle.appendChild(div);
+
+    secuencia.push(simbolo);
 
     if (esNoche) {
       nochesConsecutivas++;
@@ -170,18 +191,29 @@ function validarProgramacion() {
   const mensaje = document.createElement("div");
 
   if (maxConsecutivas <= 2) {
-    mensaje.textContent = `✅ Programación válida: ${maxConsecutivas} noche(s) consecutiva(s)`;
+    mensaje.innerHTML = `
+      <div>✅ Programación válida</div>
+      <div style="font-size:14px; font-weight:600; margin-top:4px;">
+        Máximo: ${maxConsecutivas} noche(s) consecutiva(s) · Secuencia: ${secuencia.join(" ")}
+      </div>
+    `;
     mensaje.style.backgroundColor = "#d4fcd4";
     mensaje.style.color = "#006400";
   } else {
-    mensaje.textContent = `❌ Programación inválida: ${maxConsecutivas} noches consecutivas (máx. 2 permitidas)`;
+    mensaje.innerHTML = `
+      <div>❌ Programación inválida</div>
+      <div style="font-size:14px; font-weight:600; margin-top:4px;">
+        ${maxConsecutivas} noches consecutivas detectadas · Máximo permitido: 2 · Secuencia: ${secuencia.join(" ")}
+      </div>
+    `;
     mensaje.style.backgroundColor = "#fcdada";
     mensaje.style.color = "#8b0000";
   }
 
-  mensaje.style.padding = "10px";
-  mensaje.style.fontWeight = "600";
-  mensaje.style.borderRadius = "8px";
+  mensaje.style.padding = "14px 16px";
+  mensaje.style.fontWeight = "800";
+  mensaje.style.borderRadius = "14px";
+  mensaje.style.boxShadow = "0 6px 14px rgba(0, 30, 60, 0.10)";
 
   resultado.appendChild(mensaje);
 }
