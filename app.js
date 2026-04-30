@@ -23,27 +23,21 @@ function determinarClasificacion(inicio, fin) {
 
   const dentroZonaRoja = tiempoZonaRoja > 0;
 
-  // 01:30 = minuto 90
-  // Regla oficial aplicada:
-  // - Antes de 01:30: Media noche
-  // - Desde 01:30: Noche completa
+  // DEFINICIÓN OFICIAL:
+  // - Noche completa solo si el PSV cruza 01:30 desde antes.
+  // - Si el PSV comienza después de 01:30, es media noche,
+  //   aunque permanezca varias horas dentro de zona roja.
   const terminaEnODepues0130 = finD >= 90;
   const comienzaAntesOEn0130IncluyendoDiaPrevio = (inicioD <= 90 || inicio > fin);
 
-  // Noche completa si abarca toda la zona roja: 00:30 a 05:30 = 300 min
   if (tiempoZonaRoja >= 300) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // Noche completa si toca zona roja, termina a las 01:30 o después,
-  // y comenzó antes de las 01:30, a las 01:30 exactas, o cruzó medianoche
   if (dentroZonaRoja && terminaEnODepues0130 && comienzaAntesOEn0130IncluyendoDiaPrevio) {
     return { tipo: 'Completa', icono: '🌙' };
   }
 
-  // Media noche si toca zona roja, pero:
-  // - termina antes de 01:30, o
-  // - comienza después de 01:30
   if (dentroZonaRoja) {
     if (finD < 90 || inicioD > 90) {
       return { tipo: 'Media', icono: '✅' };
@@ -104,18 +98,24 @@ function validarProgramacion() {
   const psvs = [];
 
   for (let i = 1; i <= 3; i++) {
-    const hIni = parseInt(document.getElementById(`start${i}_hh`).value);
-    const mIni = parseInt(document.getElementById(`start${i}_mm`).value);
-    const hFin = parseInt(document.getElementById(`end${i}_hh`).value);
-    const mFin = parseInt(document.getElementById(`end${i}_mm`).value);
+    const hIniValue = document.getElementById(`start${i}_hh`).value;
+    const mIniValue = document.getElementById(`start${i}_mm`).value;
+    const hFinValue = document.getElementById(`end${i}_hh`).value;
+    const mFinValue = document.getElementById(`end${i}_mm`).value;
 
-    if (
-      isNaN(hIni) || isNaN(mIni) ||
-      isNaN(hFin) || isNaN(mFin)
-    ) {
-      resultado.innerHTML = "";
+    const valores = [hIniValue, mIniValue, hFinValue, mFinValue];
+    const estaVacio = valores.every(v => v === "");
+    const estaParcial = valores.some(v => v === "") && !estaVacio;
+
+    // Si el PSV está completamente vacío, se ignora
+    if (estaVacio) {
+      continue;
+    }
+
+    // Si el PSV está parcialmente lleno, se detiene y avisa
+    if (estaParcial) {
       const mensajeError = document.createElement("div");
-      mensajeError.textContent = "⚠️ Debes completar inicio y término de los 3 PSV.";
+      mensajeError.textContent = `⚠️ El PSV ${i} está incompleto. Debes ingresar inicio y término completos.`;
       mensajeError.style.backgroundColor = "#fff3cd";
       mensajeError.style.color = "#856404";
       mensajeError.style.padding = "10px";
@@ -125,17 +125,38 @@ function validarProgramacion() {
       return;
     }
 
+    const hIni = parseInt(hIniValue);
+    const mIni = parseInt(mIniValue);
+    const hFin = parseInt(hFinValue);
+    const mFin = parseInt(mFinValue);
+
     const inicio = hIni * 60 + mIni;
     const fin = hFin * 60 + mFin;
 
-    psvs.push({ inicio, fin });
+    psvs.push({
+      numero: i,
+      inicio,
+      fin
+    });
+  }
+
+  if (psvs.length === 0) {
+    const mensajeError = document.createElement("div");
+    mensajeError.textContent = "⚠️ Debes ingresar al menos un PSV.";
+    mensajeError.style.backgroundColor = "#fff3cd";
+    mensajeError.style.color = "#856404";
+    mensajeError.style.padding = "10px";
+    mensajeError.style.fontWeight = "600";
+    mensajeError.style.borderRadius = "8px";
+    resultado.appendChild(mensajeError);
+    return;
   }
 
   let nochesConsecutivas = 0;
   let maxConsecutivas = 0;
 
-  psvs.forEach((psv, i) => {
-    const { div, esNoche } = mostrarResultado(i + 1, psv.inicio, psv.fin);
+  psvs.forEach((psv) => {
+    const { div, esNoche } = mostrarResultado(psv.numero, psv.inicio, psv.fin);
     detalle.appendChild(div);
 
     if (esNoche) {
