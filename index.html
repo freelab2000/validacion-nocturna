@@ -75,6 +75,7 @@
       border-radius: var(--radius);
       box-shadow: 0 6px 20px rgba(0, 30, 60, 0.08);
       padding: 16px 18px;
+      margin: 0;
     }
 
     .psv-box h2 {
@@ -82,6 +83,9 @@
       color: var(--blue-dark);
       margin: 0 0 14px;
       font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       border-bottom: 1px solid var(--line);
       padding-bottom: 9px;
@@ -91,16 +95,20 @@
       display: grid;
       grid-template-columns: auto auto;
       gap: 52px;
+      align-items: end;
       justify-content: center;
     }
 
     .field {
+      margin: 0;
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     label {
+      display: block;
       margin-bottom: 6px;
       font-size: 13px;
       font-weight: 700;
@@ -112,49 +120,88 @@
       display: inline-grid;
       grid-template-columns: 82px 82px;
       gap: 8px;
+      width: auto;
     }
 
     select {
       width: 82px;
+      min-width: 82px;
       padding: 10px 8px;
       font-size: 16px;
       font-weight: 600;
       border: 1px solid #b7c4d1;
       border-radius: 12px;
       background: linear-gradient(145deg, #f8fafc, #e6edf5);
+      color: #111827;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
       text-align: center;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--blue-main);
+      box-shadow: 0 0 0 3px rgba(0,64,128,0.14);
+      background: #ffffff;
     }
 
     button {
       margin: 18px auto 0;
       display: block;
-      width: min(100%, 360px);
-      background: linear-gradient(135deg, #315f86, #477ca8);
+      width: min(100%, 420px);
+      background: linear-gradient(135deg, #003766, #005b9f);
       color: white;
-      border: 1px solid rgba(255,255,255,0.25);
-      padding: 10px 16px;
-      font-size: 15px;
-      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 12px 18px;
+      font-size: 16px;
+      border-radius: 14px;
       cursor: pointer;
-      font-weight: 700;
-      box-shadow: 0 6px 14px rgba(0, 40, 90, 0.16);
-      transition: 0.2s;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(0, 40, 90, 0.22);
+      transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
     }
 
     button:hover {
       filter: brightness(1.05);
       transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 40, 90, 0.26);
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 5px 12px rgba(0, 40, 90, 0.20);
     }
 
     .result {
       margin-top: 18px;
+      padding: 0;
+      border-radius: 16px;
+      font-weight: 700;
     }
 
     #detalle {
-      margin-top: 14px;
+      margin-top: 14px !important;
+      font-size: 15px !important;
       display: grid;
+      grid-template-columns: 1fr;
       gap: 10px;
+    }
+
+    #detalle .resultado {
+      border-radius: 16px;
+      padding: 14px 18px;
+      box-shadow: 0 5px 16px rgba(0, 30, 60, 0.08);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    #detalle .resultado strong {
+      color: #102a43;
+      font-size: 17px;
+    }
+
+    #detalle ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+      line-height: 1.45;
     }
 
     .info-box {
@@ -163,7 +210,14 @@
       border-left: 5px solid #007acc;
       padding: 14px 16px;
       border-radius: 14px;
+      line-height: 1.55;
+      color: #002244;
       font-size: 13px;
+      box-shadow: 0 5px 14px rgba(0, 30, 60, 0.06);
+    }
+
+    .info-box strong {
+      font-weight: 800;
     }
 
     footer {
@@ -176,6 +230,23 @@
     }
 
     @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .panel {
+        padding: 14px;
+        border-radius: 20px;
+      }
+
+      .psv-box {
+        padding: 14px;
+      }
+
+      .psv-box h2 {
+        font-size: 18px;
+      }
+
       .time-row {
         grid-template-columns: 1fr;
         gap: 12px;
@@ -186,12 +257,24 @@
         width: 100%;
       }
 
+      .field {
+        width: 100%;
+      }
+
       select {
         width: 100%;
+        min-width: 0;
+        font-size: 15px;
+        padding: 9px 8px;
       }
 
       button {
         width: 100%;
+        font-size: 16px;
+        padding: 13px 16px;
+        position: sticky;
+        bottom: 10px;
+        z-index: 5;
       }
     }
   </style>
@@ -210,15 +293,16 @@
           <div class="field">
             <label>Inicio (L.T)</label>
             <div class="dual-select">
-              <select id="start1_hh"></select>
-              <select id="start1_mm"></select>
+              <select id="start1_hh"><option value="" disabled selected hidden>hh</option></select>
+              <select id="start1_mm"><option value="" disabled selected hidden>mm</option></select>
             </div>
           </div>
+
           <div class="field">
             <label>Término (L.T)</label>
             <div class="dual-select">
-              <select id="end1_hh"></select>
-              <select id="end1_mm"></select>
+              <select id="end1_hh"><option value="" disabled selected hidden>hh</option></select>
+              <select id="end1_mm"><option value="" disabled selected hidden>mm</option></select>
             </div>
           </div>
         </div>
@@ -230,15 +314,16 @@
           <div class="field">
             <label>Inicio (L.T)</label>
             <div class="dual-select">
-              <select id="start2_hh"></select>
-              <select id="start2_mm"></select>
+              <select id="start2_hh"><option value="" disabled selected hidden>hh</option></select>
+              <select id="start2_mm"><option value="" disabled selected hidden>mm</option></select>
             </div>
           </div>
+
           <div class="field">
             <label>Término (L.T)</label>
             <div class="dual-select">
-              <select id="end2_hh"></select>
-              <select id="end2_mm"></select>
+              <select id="end2_hh"><option value="" disabled selected hidden>hh</option></select>
+              <select id="end2_mm"><option value="" disabled selected hidden>mm</option></select>
             </div>
           </div>
         </div>
@@ -250,15 +335,16 @@
           <div class="field">
             <label>Inicio (L.T)</label>
             <div class="dual-select">
-              <select id="start3_hh"></select>
-              <select id="start3_mm"></select>
+              <select id="start3_hh"><option value="" disabled selected hidden>hh</option></select>
+              <select id="start3_mm"><option value="" disabled selected hidden>mm</option></select>
             </div>
           </div>
+
           <div class="field">
             <label>Término (L.T)</label>
             <div class="dual-select">
-              <select id="end3_hh"></select>
-              <select id="end3_mm"></select>
+              <select id="end3_hh"><option value="" disabled selected hidden>hh</option></select>
+              <select id="end3_mm"><option value="" disabled selected hidden>mm</option></select>
             </div>
           </div>
         </div>
@@ -266,7 +352,7 @@
 
     </div>
 
-    <button type="submit">Validar programación</button>
+    <button type="submit">🧮 Validar programación</button>
   </form>
 
   <div id="resultado" class="result"></div>
@@ -274,12 +360,36 @@
 
   <div class="info-box">
     <strong>ℹ️ Importante:</strong>
-    Zona roja entre 00:30 y 05:30 LT.
+    Según el convenio colectivo, <strong>jornada nocturna</strong> es aquella que incluye un PSV dentro del período denominado <strong>zona roja</strong>, comprendido entre las <strong>00:30</strong> y las <strong>05:30</strong> L.T del lugar de operación.
   </div>
 
   <footer>
     Versión: <strong>1.3.35.f.w.t</strong>
   </footer>
+
+  <script>
+    const loadSelect = (id, start, end) => {
+      const sel = document.getElementById(id);
+      for (let i = start; i <= end; i++) {
+        const opt = document.createElement("option");
+        opt.value = i.toString().padStart(2, '0');
+        opt.textContent = i.toString().padStart(2, '0');
+        sel.appendChild(opt);
+      }
+    };
+
+    for (let i = 1; i <= 3; i++) {
+      loadSelect(`start${i}_hh`, 0, 23);
+      loadSelect(`start${i}_mm`, 0, 59);
+      loadSelect(`end${i}_hh`, 0, 23);
+      loadSelect(`end${i}_mm`, 0, 59);
+    }
+
+    document.getElementById("nightForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      validarProgramacion();
+    });
+  </script>
 
   <script src="app.js"></script>
 </body>
