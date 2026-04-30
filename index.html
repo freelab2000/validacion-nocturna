@@ -23,9 +23,7 @@
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -147,28 +145,28 @@
     button {
       margin: 18px auto 0;
       display: block;
-      width: min(100%, 420px);
-      background: linear-gradient(135deg, #003766, #005b9f);
+      width: min(100%, 360px);
+      background: linear-gradient(135deg, #315f86, #477ca8);
       color: white;
-      border: 1px solid rgba(255,255,255,0.22);
-      padding: 12px 18px;
-      font-size: 16px;
-      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 10px 16px;
+      font-size: 15px;
+      border-radius: 12px;
       cursor: pointer;
-      font-weight: 800;
-      box-shadow: 0 8px 18px rgba(0, 40, 90, 0.22);
+      font-weight: 700;
+      box-shadow: 0 6px 14px rgba(0, 40, 90, 0.16);
       transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
     }
 
     button:hover {
       filter: brightness(1.05);
       transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(0, 40, 90, 0.26);
+      box-shadow: 0 8px 16px rgba(0, 40, 90, 0.20);
     }
 
     button:active {
       transform: translateY(1px) scale(0.99);
-      box-shadow: 0 5px 12px rgba(0, 40, 90, 0.20);
+      box-shadow: 0 4px 10px rgba(0, 40, 90, 0.16);
     }
 
     .result {
@@ -216,9 +214,7 @@
       box-shadow: 0 5px 14px rgba(0, 30, 60, 0.06);
     }
 
-    .info-box strong {
-      font-weight: 800;
-    }
+    .info-box strong { font-weight: 800; }
 
     footer {
       margin-top: 28px;
@@ -230,22 +226,16 @@
     }
 
     @media (max-width: 640px) {
-      body {
-        padding: 14px;
-      }
+      body { padding: 14px; }
 
       .panel {
         padding: 14px;
         border-radius: 20px;
       }
 
-      .psv-box {
-        padding: 14px;
-      }
+      .psv-box { padding: 14px; }
 
-      .psv-box h2 {
-        font-size: 18px;
-      }
+      .psv-box h2 { font-size: 18px; }
 
       .time-row {
         grid-template-columns: 1fr;
@@ -257,9 +247,7 @@
         width: 100%;
       }
 
-      .field {
-        width: 100%;
-      }
+      .field { width: 100%; }
 
       select {
         width: 100%;
@@ -352,7 +340,7 @@
 
     </div>
 
-    <button type="submit">🧮 Validar programación</button>
+    <button type="submit">Validar programación</button>
   </form>
 
   <div id="resultado" class="result"></div>
