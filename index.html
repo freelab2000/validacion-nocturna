@@ -145,27 +145,30 @@
     }
 
     button {
-      margin-top: 18px;
-      background: linear-gradient(135deg, #002b5c, #00509e);
+      margin: 18px auto 0;
+      display: block;
+      width: min(100%, 420px);
+      background: linear-gradient(135deg, #003766, #005b9f);
       color: white;
-      border: none;
-      padding: 15px 18px;
-      width: 100%;
-      font-size: 18px;
-      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 12px 18px;
+      font-size: 16px;
+      border-radius: 14px;
       cursor: pointer;
       font-weight: 800;
-      box-shadow: 0 12px 26px rgba(0, 40, 90, 0.35);
-      transition: transform 0.12s ease, filter 0.2s ease;
+      box-shadow: 0 8px 18px rgba(0, 40, 90, 0.22);
+      transition: transform 0.12s ease, filter 0.2s ease, box-shadow 0.2s ease;
     }
 
     button:hover {
-      filter: brightness(1.08);
+      filter: brightness(1.05);
       transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 40, 90, 0.26);
     }
 
     button:active {
       transform: translateY(1px) scale(0.99);
+      box-shadow: 0 5px 12px rgba(0, 40, 90, 0.20);
     }
 
     .result {
@@ -266,8 +269,9 @@
       }
 
       button {
+        width: 100%;
         font-size: 16px;
-        padding: 14px 16px;
+        padding: 13px 16px;
         position: sticky;
         bottom: 10px;
         z-index: 5;
